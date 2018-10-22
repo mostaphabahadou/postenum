@@ -1,4 +1,4 @@
-#A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box
+#A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box.
 #Version 0.1
 
 <--- POST-EXPLOITATION TOOL by mbahadou --->
