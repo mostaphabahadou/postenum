@@ -1,19 +1,16 @@
 #A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box
 #Version 0.1
 
-############################################################################
-#                                                                          #
-#                   POST-EXPLOITATION TOOL by mbahadou                     #
-#                                                                          #
-############################################################################
+<--- POST-EXPLOITATION TOOL by mbahadou --->
+
 
 
 
 Usage : ./postexp.sh <option>
-
+        
  Options :
-	-a : checking everything [services, conf info, users, special files..]
-	-s : checking filesystem [SUID, SGID, written dir..]
+        -a : checking everything [services, conf info, users, special files..]
+        -s : checking filesystem [SUID, SGID, written dir..]
 	-l : checking development tools and languages [php, python..]
 	-c : checking hidden files and writable /etc files..
 	-n : checking network settings, dns, arp, mac, ip..
