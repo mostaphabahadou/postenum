@@ -3,7 +3,7 @@
 
 <--- POST-EXPLOITATION TOOL by mbahadou --->
 
-Usage : ./postexp.sh <option>
+Usage : ./postexp.sh [option]
         
 Options :
 * -a : checking everything [services, conf info, users, special files..]
