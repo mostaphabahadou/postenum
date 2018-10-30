@@ -1,7 +1,8 @@
 * A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box
 * Version 0.1
+
 * USE
-        * Usage : ./postexp.sh [option]
+   * Usage : ./postexp.sh [option]
         
 * Options :
        * -a : checking everything [services, conf info, users, special files..]
