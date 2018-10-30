@@ -5,7 +5,7 @@
    * Usage : ./postexp.sh [option]
         
 * Options :
-       * -a : checking everything [services, conf info, users, special files..]
+   * -a : checking everything [services, conf info, users, special files..]
        * -s : checking filesystem [SUID, SGID, written dir..]
        * -l : checking development tools and languages [php, python..]
         * -c : checking hidden files and writable /etc files..
