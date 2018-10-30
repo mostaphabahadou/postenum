@@ -5,6 +5,8 @@
 
 * USE
    * Usage : ./postexp.sh [option]
+   * Example : ./postexp.sh -c
+   * Example : ./postexp.sh -s
         
 * Options :
    * -a : checking everything [services, conf info, users, special files..]
