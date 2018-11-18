@@ -16,5 +16,5 @@
    * -n : checking network settings, dns, arp, mac, ip..
    * -p : checking services and cron..
    * -o : checking operating system info
-   * -v : checking sofware version
+   * -v : checking software versions
    * -t : checking some methods for extract creds and get access as root to dbs
