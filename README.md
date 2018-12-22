@@ -4,9 +4,9 @@
 
 
 * USE
-   * Usage : ./postexp.sh [option]
-   * Example : ./postexp.sh -c
-   * Example : ./postexp.sh -s
+   * Usage  : ./postexp.sh [option]
+   * Example  : ./postexp.sh -c
+   * Example  : ./postexp.sh -s
         
 * Options :
    * -a : all
