@@ -1,5 +1,5 @@
-#!/usr/bin/bash
-#version 0.1
+#!/bin/bash
+#version 0.2
 echo ""
 echo ""
 echo ""
@@ -526,6 +526,8 @@ else
 	:
 fi
 echo ""
+
+
 }
 
 function FileSystem(){
@@ -614,7 +616,7 @@ echo ""
 function DevToolsAndLang(){
 echo $boldgrn"[-] DEVELOPMENT TOOLS and LANGUAGES"$white
 echo $boldred"[+] - Check for development tools and languages are installed/supported"$white
-PYTHON=`which python`
+PYTHON=`which python 2>/dev/null`
 if [ "$PYTHON" ];
 then
 	echo -e "$PYTHON"
@@ -622,7 +624,7 @@ else
 	:
 fi
 
-PYTHON3=`which python3`
+PYTHON3=`which python3 2>/dev/null`
 if [ "$PYTHON3" ];
 then
 	echo -e "$PYTHON3"
@@ -630,7 +632,7 @@ else
 	:
 fi
 
-PERL=`which perl`
+PERL=`which perl 2>/dev/null`
 if [ "$PERL" ];
 then
 	echo -e "$PERL"
@@ -638,7 +640,7 @@ else
 	:
 fi
 
-PHP=`which php`
+PHP=`which php 2>/dev/null`
 if [ "$PHP" ];
 then
 	echo -e "$PHP"
@@ -646,7 +648,7 @@ else
 	:
 fi
 
-GCC=`which gcc`
+GCC=`which gcc 2>/dev/null`
 if [ "$GCC" ];
 then
 	echo -e "$GCC"
@@ -654,14 +656,14 @@ else
 	:
 fi
 
-CC=`which cc`
+CC=`which cc 2>/dev/null`
 if [ "$CC" ];
 then
 	echo -e "$CC"
 else
 	:
 fi
-NMAP=`which nmap`
+NMAP=`which nmap 2>/dev/null`
 if [ "$NMAP" ];
 then
 	echo -e "$NMAP"
@@ -672,7 +674,7 @@ echo ""
 
 echo $boldred"[+] - Check for how files can be uploaded"$white
 
-FTP=`which ftp`
+FTP=`which ftp 2>/dev/null`
 if [ "$FTP" ];
 then
 	echo -e "$FTP"
@@ -680,7 +682,7 @@ else
 	:
 fi
 
-TFTP=`which tftp`
+TFTP=`which tftp 2>/dev/null`
 if [ "$TFTP" ];
 then
 	echo -e "$TFTP"
@@ -688,7 +690,7 @@ else
 	:
 fi
 
-NETCAT=`which netcat`
+NETCAT=`which netcat 2>/dev/null`
 if [ "$NETCAT" ];
 then
 	echo -e "$NETCAT"
@@ -696,7 +698,7 @@ else
 	:
 fi
 
-NC=`which nc`
+NC=`which nc 2>/dev/null`
 if [ "$NC" ];
 then
 	echo -e "$NC"
@@ -704,7 +706,7 @@ else
 	:
 fi
 
-WGET=`which wget`
+WGET=`which wget 2>/dev/null`
 if [ "$WGET" ];
 then
 	echo -e "$WGET"
@@ -712,13 +714,24 @@ else
 	:
 fi
 
-CURL=`which curl`
+CURL=`which curl 2>/dev/null`
 if [ "$CURL" ];
 then
 	echo -e "$CURL"
 else
 	:
 fi
+echo ""
+
+echo $boldred"[+] - Shell escape"$white
+echo "awk    =	awk 'BEGIN {system(\"/bin/sh\")}'"
+echo "perl   =	perl -e 'exec \"/bin/sh\";'"
+echo "python = 	python -c 'import pty;pty.spawn(\"/bin/sh\")'"
+echo "php    =	php -r 'system(\"/bin/sh\");'"
+echo "nmap   =	--interactive"
+echo "find   =	find / -exec /usr/bin/awk 'BEGIN {system(\"/bin/sh\")}' \;"
+echo "vi     =	:!sh"
+echo "vim    =	:!sh"
 echo ""
 }
 
@@ -727,7 +740,7 @@ function SoftwareVersion(){
 echo $boldgrn"[-] SOFTWARE VERSION"$white
 echo $boldred"[+] - Check apps and services version"$white
 
-SUDOVER=`sudo --version | grep version | grep "Sudo " 2>/dev/null`
+SUDOVER=`sudo -V | grep version | grep "Sudo " 2>/dev/null`
 if [ "$SUDOVER" ];
 then
 	echo $yellowintensy"[x] Sudo version"$white
@@ -736,7 +749,7 @@ else
 	:
 fi
 
-MYSQLVER=`mysql --version 2>/dev/null`
+MYSQLVER=`mysql -V 2>/dev/null`
 if [ "$MYSQLVER" ];
 then
 	echo $yellowintensy"[x] MYSQL version"$white
@@ -745,7 +758,7 @@ else
 	:
 fi
 
-PSQL=`psql --version`
+PSQL=`psql -V 2>/dev/null`
 if [ "$PSQL" ];
 then
 	echo $yellowintensy"[x] PostgreSQL version"$white
@@ -772,15 +785,18 @@ else
 	:
 fi
 
-echo $yellowintensy"[x] Chkrootkit version"$white
-CHKROOTKIT=`chkrootkit -V`
+echo $yellowintensy"[x] Check for chkrootkit version"$white
+CHKROOTKIT=`echo '' | grep version $(chkrootkit -V) 2>/dev/null`
 if [ "$CHKROOTKIT" ];
 then
+	echo $yellowintensy"[x] Chkrootkit version"$white
 	echo -e "$CHKROOTKIT"
 else
 	:
 fi
 echo ""
+
+
 }
 
 function TryingAccess(){
@@ -875,15 +891,15 @@ fi
 function Usage(){
 echo $boldgrn"Usage : ./postexp.sh <option>"$white; echo ""
 echo " Options :"
-echo "	-a : checking everything [services, conf info, users, special files..]"
-echo "	-s : checking filesystem [SUID, SGID, written dir..]"
-echo "	-l : checking development tools and languages [php, python..]"
-echo "	-c : checking hidden files and writable /etc files.."
-echo "	-n : checking network settings, dns, arp, mac, ip.."
-echo "	-p : checking services and cron.."
-echo "	-o : checking operating system info"
-echo "	-v : checking sofware version"
-echo "	-t : checking some methods for extract creds and get access as root to dbs"
+echo "	-a :	all"
+echo "	-s :	filesystem [SUID, SGID..]"
+echo "	-l :	shell escape and development tools"
+echo "	-c :	the most interesting files"
+echo "	-n :	network settings"
+echo "	-p :	services and cron.."
+echo "	-o :	operating system informations"
+echo "	-v :	sofware versions"
+echo "	-t :	extract creds and get access as root to dbs"
 echo ""
 }
 
