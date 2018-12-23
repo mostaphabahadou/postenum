@@ -1,5 +1,5 @@
 * A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box
-* Version 0.2
+* Version 0.3
 
 
 
