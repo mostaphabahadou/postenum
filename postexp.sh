@@ -13,7 +13,7 @@
 # Editing the development tools as well as the way to extract version from applications/services
 
 # Version 0.3
-# Adding commands to display crontab contents and list user's crontab 
+# Adding commands to display crontab contents and remove 'total' text from results of [ls]
 
 echo ""
 echo ""
@@ -109,16 +109,18 @@ else
 fi
 
 echo ""
-CRONUSER=`crontab -l`
-if [ "$CRONUSER"  ];
+
+CROND=`ls -al /etc/cron.d/ | grep -v "total" 2>/dev/null`
+if [ "$CROND"  ];
 then
+	echo $yellowintensy"[x] Using ls -la /etc/cron.d/"$white
+	echo -e "$CROND\n"
 	echo $yellowintensy"[x] Using crontab -l"$white
-	echo -e "$CRONUSER"
+	crontab -l
 else
 	:
 fi
-
-echo ""
+echo""
 
 
 CRONTAB=`cat /etc/crontab 2>/dev/null`
@@ -133,7 +135,7 @@ fi
 echo""
 
 
-CRONDAILY=`ls -l /etc/cron.daily 2>/dev/null`
+CRONDAILY=`ls -l /etc/cron.daily | grep -v "total" 2>/dev/null`
 if [ "$CRONDAILY" ];
 then
 	echo $yellowintensy"[x] /etc/cron.daily"$white
@@ -142,7 +144,7 @@ else
 	:
 fi
 
-CRONDHOURLY=`ls -l /etc/cron.hourly 2>/dev/null`
+CRONDHOURLY=`ls -l /etc/cron.hourly | grep -v "total" 2>/dev/null`
 if [ "$CRONDHOURLY" ];
 then
 	echo $yellowintensy"[x] /etc/cron.hourly"$white
@@ -151,7 +153,7 @@ else
 	:
 fi 
 
-CRONDMONTHLY=`ls -l /etc/cron.monthly 2>/dev/null`
+CRONDMONTHLY=`ls -l /etc/cron.monthly | grep -v "total" 2>/dev/null`
 if [ "$CRONDMONTHLY" ];
 then
 	echo $yellowintensy"[x] /etc/cron.monthly"$white
@@ -417,7 +419,7 @@ else
 	ls -l /etc/sudoers 2>/dev/null
 fi
 echo ""
-MAILVAR=`ls -alh /var/mail 2>/dev/null`
+MAILVAR=`ls -alh /var/mail | grep -v "total" 2>/dev/null`
 if [ "$MAILVAR" ];
 then 
 	echo $yellowintensy"[x] Using ls -alh /var/mail"$white
@@ -426,7 +428,7 @@ else
 	:
 fi
 
-ROOTMAIL=`ls -l /var/mail/root 2>/dev/null`
+ROOTMAIL=`ls -l /var/mail/root | grep -v "total" 2>/dev/null`
 if [ -e /var/mail/root ] && [ -r /var/mail/root ];
 then
 	echo $yellowintensy"[x] Using ls -l /var/mail/root"$white
@@ -437,7 +439,7 @@ fi
 echo ""
 
 echo $boldred"[+] - Check if anything interesting in the home directories"$white
-ROOTDIR=`ls -ahl /root/ 2>/dev/null`
+ROOTDIR=`ls -ahl /root/ | grep -v "total" 2>/dev/null`
 if [ "$ROOTDIR" ];
 then
 	echo $yellowintensy"[x] Using ls -alh /root"$white
@@ -447,7 +449,7 @@ else
 	:
 fi
 
-HOMEDIR=`ls -lh /home/ 2>/dev/null`
+HOMEDIR=`ls -lh /home/ | grep -v "total" 2>/dev/null`
 if [ "$HOMEDIR" ];
 then
 	echo $yellowintensy"[x] Using ls -lh /home"$white
@@ -456,7 +458,7 @@ else
 	:
 fi
 
-HOMEHISTORY=`ls -lah /home/*/.*_history 2>/dev/null`
+HOMEHISTORY=`ls -lah /home/*/.*_history | grep -v "total" 2>/dev/null`
 
 if [ "$HOMEHISTORY" ];
 then
@@ -467,7 +469,7 @@ else
 fi
 echo ""
 
-ROOTHISTORY=`ls -lah /root/.*_history 2>/dev/null`
+ROOTHISTORY=`ls -lah /root/.*_history | grep -v "total" 2>/dev/null`
 if [ "$ROOTHISTORY" ];
 then
 	echo $yellowintensy"[x] /root history files"$white
@@ -512,12 +514,12 @@ then
 	if [ -r /home/*/.ssh ];
 	then
 		echo $yellowintensy"[x] Any private-key info - /home/*/.ssh/"$white
-		LISTSSHHOME=`ls -ld /home/*/.ssh/`
+		LISTSSHHOME=`ls -ld /home/*/.ssh/ | grep -v "total"`
 		echo -e "$cyan$LISTSSHHOME [READABLE] $white\n"
-		ls -alh /home/*/.ssh
+		ls -alh /home/*/.ssh | grep -v "total"
 	else
 		echo $yellowintensy"[x] Any private-key info - /home/*/.ssh/"$white
-		LISTSSHHOME=`ls -ld /home/*/.ssh/`
+		LISTSSHHOME=`ls -ld /home/*/.ssh/ | grep -v "total"`
 		echo -e "$cyan$LISTSSHHOME $white\n"
 	fi
 else
@@ -531,12 +533,12 @@ then
 	if [ -r /root/.ssh ];
 	then
 		echo $yellowintensy"[x] Any private-key info - /root/.ssh/"$white
-		LISTSSHROOT=`ls -ld /root/.ssh/`
+		LISTSSHROOT=`ls -ld /root/.ssh/ | grep -v "total"`
 		echo -e "$cyan$LISTSSHROOT [READABLE] $white\n"
-		ls -alh /root/.ssh/
+		ls -alh /root/.ssh/ | grep -v "total"
 	else
 		echo $yellowintensy"[x] Any private-key info - /root/.ssh/"$white
-		LISTSSHROOT=`ls -ld /root/.ssh/`
+		LISTSSHROOT=`ls -ld /root/.ssh/ |  grep -v "total"`
 		echo -e "$cyan$LISTSSHROOT $white\n"
 	fi
 else
@@ -572,7 +574,7 @@ function FileSystem(){
 echo $boldgrn"[-] FILE SYSTEM"$white
 echo $boldred"[+] - Check for any settings file database information"$white
 
-VAR=`ls -alh /var 2>/dev/null`
+VAR=`ls -alh /var | grep -v "total" 2>/dev/null`
 if [ "$VAR" ];
 then
 	echo $yellowintensy"[x] Using ls -alh /var"$white
@@ -581,7 +583,7 @@ else
 	:
 fi
 
-WWW=`ls -alh /var/www 2>/dev/null`
+WWW=`ls -alh /var/www | grep -v "total" 2>/dev/null`
 if [ "$WWW" ];
 then
 	echo $yellowintensy"[x] Using ls -alh /var/www"$white
@@ -590,7 +592,7 @@ else
 	:
 fi
 
-HTML=`ls -alh /var/www/html 2>/dev/null`
+HTML=`ls -alh /var/www/html | grep -v "total" 2>/dev/null`
 if [ "$HTML" ];
 then
 	echo $yellowintensy"[x] Using ls -alh /var/www/html"$white
@@ -1004,4 +1006,5 @@ else
 		fi	
 	fi
 fi
+
 
