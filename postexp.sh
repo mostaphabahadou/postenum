@@ -1,8 +1,8 @@
 #!/bin/bash
-# version 0.2
+# Version 0.3
 
 # Postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
-# it helps you finding your way to the root privilege.
+# It helps you finding your way to the root privilege.
 
 # Changelogs
 # Version 0.1
@@ -11,6 +11,9 @@
 # Version 0.2
 # A new title - shell escape [./postexp -l]
 # Editing the development tools as well as the way to extract version from applications/services
+
+# Version 0.3
+# Adding commands to display crontab contents and list user's crontab 
 
 echo ""
 echo ""
@@ -100,12 +103,35 @@ CRON=`ls -al /etc/ | grep cron 2>/dev/null`
 if [ "$CRON" ];
 then
 	echo $yellowintensy"[x] /etc/ | grep cron"$white
-	echo -e "$CRON\n"
-	echo $yellowintensy"[x] Using crontab -l"$white
-	crontab -l; echo ""
+	echo -e "$CRON"
 else
 	:
 fi
+
+echo ""
+CRONUSER=`crontab -l`
+if [ "$CRONUSER"  ];
+then
+	echo $yellowintensy"[x] Using crontab -l"$white
+	echo -e "$CRONUSER"
+else
+	:
+fi
+
+echo ""
+
+
+CRONTAB=`cat /etc/crontab 2>/dev/null`
+if [ "$CRONTAB"  ];
+then
+	echo $yellowintensy"[x] Using cat /etc/crontab"$white
+	echo -e "$CRONTAB"
+else
+	:
+fi
+
+echo""
+
 
 CRONDAILY=`ls -l /etc/cron.daily 2>/dev/null`
 if [ "$CRONDAILY" ];
