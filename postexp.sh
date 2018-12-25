@@ -4,9 +4,9 @@
 # Postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
 # It helps you finding your way to the root privilege.
 
-# Changelogs
+# CHANGELOGS
 # Version 0.1
-# it's the first time that we release our tool
+# It's the first time that we release our tool
 # Next
 
 
@@ -28,11 +28,6 @@
 # Next
 
 
-
-echo ""
-echo ""
-echo ""
-
 # create variables
 red=$'\e[0;31m'
 white=$'\e[0m'
@@ -44,13 +39,17 @@ boldgrn=$'\e[1;92m'
 yellowintensy=$'\e[0;93m'
 grnintensy=$'\e[0;92m'
 whiteboldintensy=$'\e[1;97m'
-
-echo $red"############################################################################"$white
-echo $red"#                                                                          #"$white	
-echo $red"#                  $whiteboldintensy POST-EXPLOITATION TOOL$grnintensy by mbahadou$red                     #"$white
-echo $red"#                                                                          #"$white
-echo $red"############################################################################"$white
-
+echo $whiteboldintensy"-----------------------------------"
+echo "
+ ver : 0.4       _                  
+ _ __   ___  ___| |_ _____  ___ __  
+| '_ \ / _ \/ __| __/ _ \ \/ / '_ \ 
+| |_) | (_) \__ \ ||  __/>  <| |_) |
+| .__/ \___/|___/\__\___/_/\_\ .__/ 
+|_|                          |_|    
+"$white
+echo "POST-EXPLOITATION TOOL$grnintensy by mbahadou"$white
+echo $whiteboldintensy"------------------------------------"$white
 echo ""
 echo ""
 echo ""
@@ -988,8 +987,8 @@ fi
 }
 
 function Usage(){
-echo $boldgrn"Usage : ./postexp.sh <option>"$white; echo ""
-echo " Options :"
+echo $boldgrn" Usage   > ./postexp.sh <option>"$white
+echo " Options >"
 echo "	-a :	all"
 echo "	-s :	filesystem [SUID, SGID..]"
 echo "	-l :	shell escape and development tools"
