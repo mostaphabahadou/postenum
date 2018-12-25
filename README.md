@@ -1,5 +1,5 @@
-* A simple tool to enumerate local information (Network info, System info, Services, Applications..) from any Linux box
-* Version 0.3
+* postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it. It helps you finding your way to the root privilege.
+* Version 0.4
 
 
 
