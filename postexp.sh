@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version 0.3
+# Version 0.4
 
 # Postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
 # It helps you finding your way to the root privilege.
@@ -7,13 +7,27 @@
 # Changelogs
 # Version 0.1
 # it's the first time that we release our tool
+# Next
+
 
 # Version 0.2
 # A new title - shell escape [./postexp -l]
 # Editing the development tools as well as the way to extract version from applications/services
+# Next
+
 
 # Version 0.3
-# Adding commands to display crontab contents and remove 'total' text from results of [ls]
+# Adding command to display crontab contents and a check for list user's crontab 
+# Next
+
+
+# Version 0.4
+# Adding features such as passwd, shadow (backups files) checks and more..
+# Solve the previous errors... 
+# Modifying the whole -v option to avoid errors and to display the correct versions
+# Next
+
+
 
 echo ""
 echo ""
@@ -356,6 +370,7 @@ else
 fi
 
 CHECKETC=`find /etc/ -maxdepth 1 -name *.conf -type f -exec ls -la {} \; 2>/dev/null`
+echo $boldred"[+] - Check /etc for config files (recursive 1 level)"$white
 if [ "$CHECKETC" ];
 then
 	echo $yellowintensy"[x] All *.conf files in /etc (recursive 1 level)"$white
@@ -392,7 +407,7 @@ if [ -w /etc/passwd ];
 then
 	echo -e "$cyan$WRPASS $white"
 else
-	ls -l /etc/passwd 2>/dev/null
+	echo -e "$WRPASS"
 fi
 
 WXSHADOW=`ls -l /etc/shadow 2>/dev/null`
@@ -400,15 +415,15 @@ if [ -w /etc/shadow ] || [ -r /etc/shadow ];
 then
 	echo -e "$cyan$WXSHADOW $white"
 else
-	ls -l /etc/shadow 2>/dev/null
+	echo -e "$WXSHADOW"
 fi
 
-WRGROUP=`ls -l /etc/passwd 2>/dev/null`
+WRGROUP=`ls -l /etc/group 2>/dev/null`
 if [ -w /etc/group ]; 
 then
 	echo -e "$cyan$WRGROUP $white"
 else
-	ls -l /etc/group 2>/dev/null
+	echo -e "$WRGROUP"
 fi
 
 WRSUDOERS=`ls -l /etc/sudoers 2>/dev/null`
@@ -416,11 +431,48 @@ if [ -w /etc/sudoers ] || [ -r /etc/sudoers ];
 then
 	echo -e "$cyan$WRSUDOERS $white"
 else
-	ls -l /etc/sudoers 2>/dev/null
+	echo -e "$WRSUDOERS"
 fi
 echo ""
+
+echo $boldred"[+] - Check backup files"$white
+BACKUPPASS=`ls -l /var/backups/passwd.bak 2>/dev/null`
+if [ "$BACKUPPASS" ];
+then
+	echo -e "$BACKUPPASS"
+else
+	:
+fi
+
+BACKUPGROUP=`ls -l /var/backups/group.bak 2>/dev/null`
+if [ "$BACKUPGROUP"  ];
+then
+	echo -e "$BACKUPGROUP"
+else
+	:
+fi
+
+BACKUPSHADOW=`ls -l /var/backups/shadow.bak 2>/dev/null`
+if [ -r /var/backups/shadow.bak ];
+then
+	echo -e "$cyan$BACKUPSHADOW $white"
+else
+	echo -e "$BACKUPSHADOW"
+fi
+
+BACKUPGSHADOW=`ls -l /var/backups/gshadow.bak 2>/dev/null`
+if [ -r /var/backups/gshadow.bak ];
+then
+	echo -e "$cyan$BACKUPGSHADOW $white"
+else
+	echo -e "$BACKUPGSHADOW"
+fi
+echo ""
+
+
 MAILVAR=`ls -alh /var/mail | grep -v "total" 2>/dev/null`
-if [ "$MAILVAR" ];
+echo $boldred"[+] - Check if anything interesting in the mail directory"$white
+if [ -d /var/mail ];
 then 
 	echo $yellowintensy"[x] Using ls -alh /var/mail"$white
 	echo -e "$MAILVAR\n"
@@ -428,11 +480,10 @@ else
 	:
 fi
 
-ROOTMAIL=`ls -l /var/mail/root | grep -v "total" 2>/dev/null`
-if [ -e /var/mail/root ] && [ -r /var/mail/root ];
+if [ -e /var/mail/root ];
 then
 	echo $yellowintensy"[x] Using ls -l /var/mail/root"$white
-	echo -e $cyan"$ROOTMAIL"$white
+	$cyan ls -l /var/mail/root | grep -v "total" 2>/dev/null $white
 else
 	:
 fi
@@ -444,33 +495,36 @@ if [ "$ROOTDIR" ];
 then
 	echo $yellowintensy"[x] Using ls -alh /root"$white
 	echo $cyan"[/] Root directory can be accessible"$white
-	echo -e "\n$ROOTDIR\n"
+	echo -e "$ROOTDIR"
 else
 	:
 fi
+
+echo ""
 
 HOMEDIR=`ls -lh /home/ | grep -v "total" 2>/dev/null`
 if [ "$HOMEDIR" ];
 then
 	echo $yellowintensy"[x] Using ls -lh /home"$white
-	echo -e $cyan"$HOMEDIR\n"$white
+	echo -e $cyan"$HOMEDIR"$white
 else
 	:
 fi
 
-HOMEHISTORY=`ls -lah /home/*/.*_history | grep -v "total" 2>/dev/null`
+echo ""
 
-if [ "$HOMEHISTORY" ];
+
+if [ -e /home/*/.*_history ];
 then
 	echo $yellowintensy"[x] /home history files"$white
-	echo $cyan"$HOMEHISTORY"$white
+	$cyan ls -alh /home/*/.*_history | grep -v "total" 2>/dev/null $white
 else
 	:
 fi
 echo ""
 
 ROOTHISTORY=`ls -lah /root/.*_history | grep -v "total" 2>/dev/null`
-if [ "$ROOTHISTORY" ];
+if [ -e /root/.*_history ];
 then
 	echo $yellowintensy"[x] /root history files"$white
 	echo $cyan"$ROOTHISTORY"$white
@@ -482,14 +536,14 @@ echo $boldred"[+] - Check for plain text password"$white
 if [ -e ~/.bash_history ];
 then
 	echo $yellowintensy"[x] ~/.bash_history"$white
-	cat ~/.bash_history ; echo ""
+	head ~/.bash_history ; echo ""
 else
 	echo $blu"~/.bash_history file doesn't exist"$white
 fi
 if [ -e ~/.nano_history ];
 then
 	echo $yellowintensy"[x] ~/.nano_history"$white
-	cat ~/.nano_history ; echo ""
+	head ~/.nano_history ; echo ""
 else
 	echo $blu"~/.nano_history file doesn't exist"$white
 fi
@@ -497,17 +551,19 @@ fi
 if [ -e ~/.mysql_history ];
 then
 	echo $yellowintensy"[x] ~/.mysql_history"$white
-	cat ~/.mysql_history ; echo ""
+	head ~/.mysql_history ; echo ""
 else
 	echo $blu"~/.mysql_history file doesn't exist"$white
 fi
 if [ -e ~/.php_history ];
 then
 	echo $yellowintensy"[x] ~/.php_history"$white
-	cat ~/.php_history ; echo ""
+	head ~/.php_history ; echo ""
 else
 	echo $blu"~/.php_history file doesn't exist"$white ; echo ""
 fi
+
+echo $boldred"[+] - Check SSH Dir/Files"$white
 
 if [ -d /home/*/.ssh ];
 then
@@ -523,9 +579,7 @@ then
 		echo -e "$cyan$LISTSSHHOME $white\n"
 	fi
 else
-	echo $yellowintensy"[x] Any private-key info - /home/*/.ssh/"$white
-	echo $blu"~/.ssh/ folder doesn't exist"$white
-	echo ""
+	:
 fi
 
 if [ -d /root/.ssh ];
@@ -542,9 +596,7 @@ then
 		echo -e "$cyan$LISTSSHROOT $white\n"
 	fi
 else
-	echo $yellowintensy"[x] Any private-key info - /root/.ssh/"$white
-	echo $blu"/root/.ssh/ folder doesn't exist"$white
-	echo ""
+	:
 fi
 ROOTLOGIN=`grep "PermitRootLogin" /etc/ssh/sshd_config 2>/dev/null | grep -v "#" | awk '{print $2}'`
 if [ "$ROOTLOGIN" ];
@@ -572,7 +624,7 @@ echo ""
 
 function FileSystem(){
 echo $boldgrn"[-] FILE SYSTEM"$white
-echo $boldred"[+] - Check for any settings file database information"$white
+echo $boldred"[+] - Check if anything interesting in the www directory"$white
 
 VAR=`ls -alh /var | grep -v "total" 2>/dev/null`
 if [ "$VAR" ];
@@ -584,7 +636,7 @@ else
 fi
 
 WWW=`ls -alh /var/www | grep -v "total" 2>/dev/null`
-if [ "$WWW" ];
+if [ -d /var/www ];
 then
 	echo $yellowintensy"[x] Using ls -alh /var/www"$white
 	echo -e "$WWW\n" 
@@ -593,7 +645,7 @@ else
 fi
 
 HTML=`ls -alh /var/www/html | grep -v "total" 2>/dev/null`
-if [ "$HTML" ];
+if [ -d /var/www/html ];
 then
 	echo $yellowintensy"[x] Using ls -alh /var/www/html"$white
 	echo -e "$HTML"
@@ -603,7 +655,7 @@ fi
 echo ""
 
 SUID=`find / -perm -u=s -type f 2>/dev/null`
-echo $boldred"[+] - Check sticky bits, SUID and GUID"$white
+echo $boldred"[+] - Check sticky bits, SUID and SGID"$white
 if [ "$SUID" ];
 then
 	echo $yellowintensy"[x] SUID - 4000"$white
@@ -631,13 +683,13 @@ else
 	:
 fi
 
+WRITABLE=`find / -perm -222 -type d 2>/dev/null`
 echo $boldred"[+] - Check for written and executable places"$white
 
-WRITEABLE=`find / -perm -222 -type d 2>/dev/null`
-if [ "$WRITEABLE" ];
+if [ "$WRITABLE" ];
 then
 	echo $yellowintensy"[x] World-writeable folder"$white
-	echo -e "$WRITEABLE\n"     # world-writeable folders
+	echo -e "$WRITABLE\n"     # world-writeable folders
 else
 	:
 fi
@@ -781,60 +833,63 @@ echo ""
 
 
 function SoftwareVersion(){
-echo $boldgrn"[-] SOFTWARE VERSION"$white
+echo $boldgrn"[-] SOFTWARES VERSION"$white
 echo $boldred"[+] - Check apps and services version"$white
 
-SUDOVER=`sudo -V | grep version | grep "Sudo " 2>/dev/null`
+SUDOVER=`which sudo`
 if [ "$SUDOVER" ];
 then
 	echo $yellowintensy"[x] Sudo version"$white
-	echo -e "$SUDOVER\n"
+	sudo -V | grep -i "version" | grep "Sudo " 2>/dev/null
 else
 	:
 fi
 
-MYSQLVER=`mysql -V 2>/dev/null`
+echo ""
+MYSQLVER=`which mysql`
 if [ "$MYSQLVER" ];
 then
 	echo $yellowintensy"[x] MYSQL version"$white
-	echo -e "$MYSQLVER\n"
+	mysql -V 2>/dev/null
 else
 	:
 fi
 
-PSQL=`psql -V 2>/dev/null`
+echo ""
+PSQL=`which psql`
 if [ "$PSQL" ];
 then
 	echo $yellowintensy"[x] PostgreSQL version"$white
-	echo -e "$PSQL\n"
+	psql -V 2>/dev/null
 else
 	:
 fi
+echo ""
 
-APACHEVER=`apache2 -v 2>/dev/null`
+APACHEVER=`which apache2`
 if [ "$APACHEVER" ];
 then
 	echo $yellowintensy"[x] Apache version"$white
-	echo -e "$APACHEVER\n"
+	apache2 -v 2>/dev/null
 else
 	:
 fi
+echo ""
 
-APACHEUSER=`grep -i 'user\|group' /etc/apache2/envvars 2>/dev/null | awk '{sub(/.*\export /,"")}1' 2>/dev/null`
+APACHEUSER=`which apache2`
 if [ "$APACHEUSER" ];
 then
 	echo $yellowintensy"[x] Account running under apache service"$white
-	echo -e "$APACHEUSER\n"
+	grep -i 'user\|group' /etc/apache2/envvars 2>/dev/null | awk '{sub(/.*\export /,"")}1'
 else
 	:
 fi
-
-echo $yellowintensy"[x] Check for chkrootkit version"$white
-CHKROOTKIT=`echo '' | grep version $(chkrootkit -V) 2>/dev/null`
+echo ""
+CHKROOTKIT=`which chkrootkit 2>/dev/null`
 if [ "$CHKROOTKIT" ];
 then
 	echo $yellowintensy"[x] Chkrootkit version"$white
-	echo -e "$CHKROOTKIT"
+	chkrootkit -V
 else
 	:
 fi
