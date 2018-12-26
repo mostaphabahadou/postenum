@@ -39,7 +39,7 @@ boldgrn=$'\e[1;92m'
 yellowintensy=$'\e[0;93m'
 grnintensy=$'\e[0;92m'
 whiteboldintensy=$'\e[1;97m'
-echo $whiteboldintensy"-----------------------------------"
+echo $whiteboldintensy"------------------------------------"
 echo "
  ver : 0.4       _                  
  _ __   ___  ___| |_ _____  ___ __  
