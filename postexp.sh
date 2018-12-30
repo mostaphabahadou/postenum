@@ -522,9 +522,9 @@ else
 fi
 echo ""
 
-ROOTHISTORY=`ls -lah /root/.*_history | grep -v "total" 2>/dev/null`
 if [ -e /root/.*_history ];
 then
+	ROOTHISTORY=`ls -lah /root/.*_history | grep -v "total" 2>/dev/null`
 	echo $yellowintensy"[x] /root history files"$white
 	echo $cyan"$ROOTHISTORY"$white
 else
