@@ -1,5 +1,5 @@
 #!/bin/bash
-# Version 0.4
+# Version 0.5
 
 # Postexp tool is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
 # It helps you finding your way to the root privilege.
@@ -28,6 +28,13 @@
 # Next
 
 
+# Version 0.5
+# Adding pkexec version check, and re-write /root and /home/* history files checking (using -v option)
+# Adding new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
+# The banner changed
+# Next
+
+
 # create variables
 red=$'\e[0;31m'
 white=$'\e[0m'
@@ -39,17 +46,17 @@ boldgrn=$'\e[1;92m'
 yellowintensy=$'\e[0;93m'
 grnintensy=$'\e[0;92m'
 whiteboldintensy=$'\e[1;97m'
-echo $whiteboldintensy"------------------------------------"
+echo $whiteboldintensy"--------------------------------------------------------"
 echo "
- ver : 0.4       _                  
+                 _                  
  _ __   ___  ___| |_ _____  ___ __  
 | '_ \ / _ \/ __| __/ _ \ \/ / '_ \ 
-| |_) | (_) \__ \ ||  __/>  <| |_) |
+| |_) | (_) \__ \ ||  __/>  <| |_) |     version : 0.4
 | .__/ \___/|___/\__\___/_/\_\ .__/ 
 |_|                          |_|    
 "$white
-echo "POST-EXPLOITATION TOOL$grnintensy by mbahadou"$white
-echo $whiteboldintensy"------------------------------------"$white
+echo "POST-EXPLOITATION Tool$grnintensy by mbahadou"$white
+echo $whiteboldintensy"--------------------------------------------------------"$white
 echo ""
 echo ""
 echo ""
@@ -512,19 +519,20 @@ fi
 
 echo ""
 
-
-if [ -e /home/*/.*_history ];
+HOMEHISTORY=`ls -alh /home/*/.*_history | grep -v "total" 2>/dev/null`
+if [ "$HOMEHISTORY" ];
 then
 	echo $yellowintensy"[x] /home history files"$white
-	$cyan ls -alh /home/*/.*_history | grep -v "total" 2>/dev/null $white
+	echo -e $cyan"$HOMEHISTORY"$white
 else
 	:
 fi
 echo ""
 
-if [ -e /root/.*_history ];
+
+ROOTHISTORY=`ls -alh /root/.*_history | grep -v "total" 2>/dev/null`
+if [ "$ROOTHISTORY" ];
 then
-	ROOTHISTORY=`ls -lah /root/.*_history | grep -v "total" 2>/dev/null`
 	echo $yellowintensy"[x] /root history files"$white
 	echo $cyan"$ROOTHISTORY"$white
 else
@@ -664,6 +672,7 @@ else
 	:
 fi
 echo ""
+
 SGID=`find / -perm -g=s -type f 2>/dev/null`
 if [ "$SGID" ];
 then
@@ -677,10 +686,69 @@ STICKY=`find / -perm -1000 -type d 2>/dev/null`
 if [ "$STICKY" ];
 then
 	echo $yellowintensy"[x] Sticky bit for folder - 1000"$white
-	echo -e "$STICKY\n"  # Sticky bit - Only the owner of the directory or the owner of a file can delete or rename here.
+	echo -e "$STICKY"  # Sticky bit - Only the owner of the directory or the owner of a file can delete or rename here.
 else
 	:
 fi
+
+echo ""
+
+CATCHECK=`which cat 2>/dev/null`
+TAILCHECK=`which tail 2>/dev/null`
+HEADCHECK=`which head 2>/dev/null`
+MORECHECK=`which more 2>/dev/null`
+LESSCHECK=`which less 2>/dev/null`
+VIMBASICCHECK=`which vim.basic 2>/dev/null`
+
+if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$VIMBASICCHECK" ];
+then
+	echo $boldred"[+] - Using SUIDs to read/write root files"$white
+	if [ -u "$CATCHECK" ];
+	then
+		ACATCHECK=`ls -l $CATCHECK 2>/dev/null`
+		echo $cyan"$ACATCHECK"$white
+	else
+		:
+	fi
+	if [ -u "$TAILCHECK" ];
+	then
+		ATAILCHECK=`ls -l $TAILCHECK 2>/dev/null`
+		echo $cyan"$ATAILCHECK"$white
+	else
+		:
+	fi
+	if [ -u "$HEADCHECK" ];
+	then
+		AHEADCHECK=`ls -l $HEADCHECK`
+		echo $cyan"$AHEADCHECK"$white
+	else
+		:
+	fi
+	if [ -u "$MORECHECK" ];
+	then
+		AMORECHECK=`ls -l $MORECHECK 2>/dev/null`
+		echo $cyan"$AMORECHECK"$white
+	else
+		:
+	fi
+	if [ -u "$LESSCHECK" ];
+	then
+		ALESSCHECK=`ls -l $LESSCHECK 2>/dev/null`
+		echo $cyan"$ALESSCHECK"$white
+	else
+		:
+	fi
+	if [ -u "$VIMBASICCHECK" ];
+	then
+		AVIMBASICCHECK=`ls -l $VIMBASICCHECK 2>/dev/null`
+		echo $cyan"$AVIMBASICCHECK"$white
+	else
+		:
+	fi
+else
+	:
+fi
+echo ""
 
 WRITABLE=`find / -perm -222 -type d 2>/dev/null`
 echo $boldred"[+] - Check for written and executable places"$white
@@ -702,6 +770,7 @@ else
 	:
 fi
 echo ""
+
 }
 
 function DevToolsAndLang(){
@@ -894,6 +963,15 @@ else
 fi
 echo ""
 
+PKEXEC=`which pkexec 2>/dev/null`
+if [ "$PKEXEC" ];
+then
+	echo $yellowintensy"[x] Pkexec version"$white
+	pkexec --version
+else
+	:
+fi
+echo""
 
 }
 
@@ -989,15 +1067,15 @@ fi
 function Usage(){
 echo $boldgrn" Usage   > ./postexp.sh <option>"$white
 echo " Options >"
-echo "	-a :	all"
-echo "	-s :	filesystem [SUID, SGID..]"
-echo "	-l :	shell escape and development tools"
-echo "	-c :	the most interesting files"
-echo "	-n :	network settings"
-echo "	-p :	services and cron.."
-echo "	-o :	operating system informations"
-echo "	-v :	sofware versions"
-echo "	-t :	extract creds and get access as root to dbs"
+echo "	-a :	All"
+echo "	-s :	Filesystem [SUID, SGID..]"
+echo "	-l :	Shell escape and development tools"
+echo "	-c :	The most interesting files"
+echo "	-n :	Network settings"
+echo "	-p :	Services and cron jobs"
+echo "	-o :	Operating system informations"
+echo "	-v :	Sofwares version"
+echo "	-t :	Fstab credentials and databases checker"
 echo ""
 }
 
@@ -1060,5 +1138,4 @@ else
 		fi	
 	fi
 fi
-
 
