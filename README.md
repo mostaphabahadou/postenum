@@ -6,9 +6,9 @@
 
 
 * USE
-   * Usage  : ./postexp.sh [option]
-   * Example  : ./postexp.sh -c
-   * Example  : ./postexp.sh -s
+   * Usage  : ./postenum.sh [option]
+   * Example  : ./postenum.sh -c
+   * Example  : ./postenum.sh -s
         
 * Options :
    * -a : All
