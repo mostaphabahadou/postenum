@@ -1,7 +1,7 @@
 #!/bin/bash
 # Version 0.5
 
-# Postexp tool is a clean, nice and easy tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
+# Postenum is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
 # It helps you finding your way to the root privilege.
 
 # CHANGELOGS
@@ -46,17 +46,18 @@ boldgrn=$'\e[1;92m'
 yellowintensy=$'\e[0;93m'
 grnintensy=$'\e[0;92m'
 whiteboldintensy=$'\e[1;97m'
-echo $whiteboldintensy"--------------------------------------------------------"
+echo $whiteboldintensy"----------------------------------------------------------------"
 echo "
-                 _                  
- _ __   ___  ___| |_ _____  ___ __  
-| '_ \ / _ \/ __| __/ _ \ \/ / '_ \ 
-| |_) | (_) \__ \ ||  __/>  <| |_) |     version : 0.4
-| .__/ \___/|___/\__\___/_/\_\ .__/ 
-|_|                          |_|    
+                 _                             
+ _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
+| '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.5
+| .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
+|_| 
+
 "$white
-echo "POST-EXPLOITATION Tool$grnintensy by mbahadou"$white
-echo $whiteboldintensy"--------------------------------------------------------"$white
+echo "POST-ENUMERATION$grnintensy by mbahadou"$white
+echo $whiteboldintensy"----------------------------------------------------------------"$white
 echo ""
 echo ""
 echo ""
@@ -1065,7 +1066,7 @@ fi
 }
 
 function Usage(){
-echo $boldgrn" Usage   > ./postexp.sh <option>"$white
+echo $boldgrn" Usage   > ./postenum.sh <option>"$white
 echo " Options >"
 echo "	-a :	All"
 echo "	-s :	Filesystem [SUID, SGID..]"
@@ -1074,7 +1075,7 @@ echo "	-c :	The most interesting files"
 echo "	-n :	Network settings"
 echo "	-p :	Services and cron jobs"
 echo "	-o :	Operating system informations"
-echo "	-v :	Sofwares version"
+echo "	-v :	Sofware's versions"
 echo "	-t :	Fstab credentials and databases checker"
 echo ""
 }
@@ -1138,4 +1139,5 @@ else
 		fi	
 	fi
 fi
+
 
