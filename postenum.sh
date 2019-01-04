@@ -701,7 +701,7 @@ MORECHECK=`which more 2>/dev/null`
 LESSCHECK=`which less 2>/dev/null`
 VIMBASICCHECK=`which vim.basic 2>/dev/null`
 
-if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$VIMBASICCHECK" ];
+if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$LESSCHECK" ] || [ -u "$VIMBASICCHECK" ];
 then
 	echo $boldred"[+] - Using SUIDs to read/write root files"$white
 	if [ -u "$CATCHECK" ];
