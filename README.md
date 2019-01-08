@@ -1,7 +1,7 @@
-* postenum is a clean, nice and easy tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it. It helps you finding your way to the root privilege. 
+* postenum is a clean, nice and easy tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privileges shell on it. It helps you finding your way to the root privileges. 
 
 
-* Version 0.5
+* Version 0.6
 
 
 
