@@ -1,8 +1,7 @@
 #!/bin/bash
-# Version 0.5
+# Version 0.6
 
-# Postenum is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privilege shell on it.
-# It helps you finding your way to the root privilege.
+# Postenum is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privileges shell on it. It helps you finding your way to the root privileges.
 
 # CHANGELOGS
 # Version 0.1
@@ -12,26 +11,32 @@
 
 # Version 0.2
 # A new title - shell escape [./postexp -l]
-# Editing the development tools as well as the way to extract version from applications/services
+# Edited the development tools as well as the way to extract version from applications/services
 # Next
 
 
 # Version 0.3
-# Adding command to display crontab contents and a check for list user's crontab 
+# Added command to display crontab contents and a check for list user's crontab 
 # Next
 
 
 # Version 0.4
-# Adding features such as passwd, shadow (backups files) checks and more..
-# Solve the previous errors... 
-# Modifying the whole -v option to avoid errors and to display the correct versions
+# Added features such as passwd, shadow (backups files) checks and more..
+# Solved the previous errors... 
+# Modified the whole -v option to avoid errors and to display the correct versions
 # Next
 
 
 # Version 0.5
-# Adding pkexec version check, and re-write /root and /home/* history files checking (using -v option)
-# Adding new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
+# Added pkexec version check, and re-write /root and /home/* history files checking (using -v option)
+# Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
 # The banner changed
+# Next
+
+
+# Version 0.6
+# Added search on config and db files on /var/ (using -s option)
+# Exploit's guesses for linux kernel (using -o option)
 # Next
 
 
@@ -51,7 +56,7 @@ echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.5
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.6
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
@@ -61,6 +66,42 @@ echo $whiteboldintensy"---------------------------------------------------------
 echo ""
 echo ""
 echo ""
+
+function DirtyCow(){
+echo "$cyan Dirty Cow x86-x64$white - https://www.exploit-db.com/exploits/40839"
+}
+
+function Exploits410(){
+echo "$cyan Race Condition$white - https://www.exploit-db.com/exploits/43345"
+}
+function Exploits440(){
+echo "$cyan Ubuntu 16.04.4$white - https://www.exploit-db.com/exploits/44298"
+echo "$cyan Ubuntu 14.04/16.04 x86-64$white - https://www.exploit-db.com/exploits/40871"
+}
+function Exploits433(){
+echo "$cyan Ubuntu 14.04/15.10$white - https://www.exploit-db.com/exploits/39166"
+echo "$cyan Overlayfs$white - https://www.exploit-db.com/exploits/39230"
+}
+
+function Exploits413(){
+echo "$cyan Debian 9$white - https://www.exploit-db.com/exploits/44303"
+}
+
+function Exploits2426(){
+echo "$cyan UDEV < 1.4.1 (1)$white - https://www.exploit-db.com/exploits/8478"
+echo "$cyan UDEV < 1.4.1 (2)$white - https://www.exploit-db.com/exploits/8572"
+echo "$cyan Linux Kernel 2.4.x/2.6.x$white - https://www.exploit-db.com/exploits/9545"
+echo "$cyan Linux Kernel 2.6 < 2.6.19$white - https://www.exploit-db.com/exploits/9542"
+echo "$cyan Linux Kernel 2.6.0 < 2.6.31 (1)$white - https://www.exploit-db.com/exploits/33321"
+echo "$cyan Linux Kernel 2.6.x (2)$white - https://www.exploit-db.com/exploits/33322"
+echo "$cyan Linux Kernel 2.6.x$white - https://www.exploit-db.com/exploits/30604"
+}
+
+function Exploits313(){
+echo "$cyan Linux Kernel 3.13 < 3.19 Ubuntu 12.04/14.04/14.10/15.04$white - https://www.exploit-db.com/exploits/37292"
+echo "$cyan Linux Kernel 3.13 SGID$white - https://www.exploit-db.com/exploits/33824"
+}
+
 function OperatingSystem(){
 echo $boldgrn"[-] OPERATING SYSTEM"$white
 echo $boldred"[+] - Check current user and group information"$white
@@ -101,20 +142,69 @@ UNAME=`uname -a 2>/dev/null`
 if [ "$UNAME" ];
 then
 	echo $yellowintensy"[x] Using uname -a"$white
-	echo -e "$UNAME\n"
-else
-	:
-fi
-PROCVERSION=`cat /proc/version 2>/dev/null`
-if [ "$PROCVERSIOM" ];
-then
-	echo $yellowintensy"[x] /proc/version"$white
-	echo -e "$PROCVERSIOM"
+	echo -e "$UNAME"
 else
 	:
 fi
 echo ""
+
+PROCVERSION=`cat /proc/version 2>/dev/null`
+if [ "$PROCVERSION" ];
+then
+	echo $yellowintensy"[x] /proc/version"$white
+	echo -e "$PROCVERSION"
+else
+	:
+fi
+echo ""
+
+echo $boldred"[+] - Exploits"$white
+y=3.0.0
+kernel=`uname -a | cut -d " " -f "3" | cut -d "-" -f "1"`
+OPERATOR=`echo "$kernel $y" | awk '{if ($1 < $2) print "2"; else print "3"}'`
+if [ "$OPERATOR" == "2" ];
+then
+	echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+	DirtyCow
+	Exploits2426
+	Exploits410
+	Exploits440
+else
+	x=3.19
+	OPERATOR=`echo "$kernel $x" | awk '{if ($1 <= $2 && $1 > 3.12) print "3"; else print "4"}'`
+	if [ "$OPERATOR" == "3" ];
+	then
+		echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+		DirtyCow
+		Exploits313
+		Exploits410
+		Exploits440
+	else
+		z=4.10.5
+		OPERATOR=`echo "$kernel $z" | awk '{if ($1 <= $2) print "4"; else print "5"}'`
+		if [ "$OPERATOR" == "4" ];
+		then
+			echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+			Exploits410
+			Exploits440
+			Exploits433
+		else
+			w=4.13
+			OPERATOR=`echo "$kernel $w" | awk '{if ($1 == $2) print "5"; else print "6"}'`
+			if [ "$OPERATOR" == "5" ];
+			then
+				echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+				Exploit413
+			else
+				echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+				echo $cyan"You still need to check other exploits"$white
+			fi
+		fi
+	fi
+fi
+echo ""
 }
+
 
 function AppsAndServices(){
 echo $boldgrn"[-] APPS and SERVICES"$white
@@ -662,6 +752,17 @@ else
 fi
 echo ""
 
+
+CONFIGDB=`find /var/ -iname config.* -type f 2>/dev/null && find /var/ -iname db.* -type f 2>/dev/null`
+if [ "$CONFIGDB" ];
+then
+	echo $yellowintensy"[x] Search on config.* and db.* files on /var/"$white
+	echo -e "$CONFIGDB"
+else
+	:
+fi
+echo ""
+
 SUID=`find / -perm -u=s -type f 2>/dev/null`
 echo $boldred"[+] - Check sticky bits, SUID and SGID"$white
 if [ "$SUID" ];
@@ -673,6 +774,7 @@ else
 	:
 fi
 echo ""
+
 
 SGID=`find / -perm -g=s -type f 2>/dev/null`
 if [ "$SGID" ];
