@@ -68,7 +68,8 @@ echo ""
 echo ""
 
 function DirtyCow(){
-echo "$cyan Dirty Cow x86-x64$white - https://www.exploit-db.com/exploits/40839"
+echo "$cyan Dirty Cow$white - https://www.exploit-db.com/exploits/40839"
+echo "$cyan Dirty Cow x86-x64$white - https://www.exploit-db.com/exploits/40616"
 }
 
 function Exploits410(){
