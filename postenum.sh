@@ -4,40 +4,35 @@
 # Postenum is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privileges shell on it. It helps you finding your way to the root privileges.
 
 # CHANGELOGS
-# Version 0.1
-# It's the first time that we release our tool
-# Next
-
-
-# Version 0.2
-# A new title - shell escape [./postexp -l]
-# Edited the development tools as well as the way to extract version from applications/services
-# Next
-
-
-# Version 0.3
-# Added command to display crontab contents and a check for list user's crontab 
-# Next
-
-
-# Version 0.4
-# Added features such as passwd, shadow (backups files) checks and more..
-# Solved the previous errors... 
-# Modified the whole -v option to avoid errors and to display the correct versions
-# Next
-
+# Version 0.6
+# - Added search on config and db files on /var/ (using -s option)
+# - Exploit's guesses for linux kernel (using -o option)
+# - Next
 
 # Version 0.5
-# Added pkexec version check, and re-write /root and /home/* history files checking (using -v option)
-# Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
-# The banner changed
-# Next
+# - Added pkexec version check, and re-write /root and /home/* history files checking (using -v option)
+# - Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
+# - The banner changed
+# - Next
 
+# Version 0.4
+# - Added features such as passwd, shadow (backups files) checks and more..
+# - Solved the previous errors... 
+# - Modified the whole -v option to avoid errors and to display the correct versions
+# - Next
 
-# Version 0.6
-# Added search on config and db files on /var/ (using -s option)
-# Exploit's guesses for linux kernel (using -o option)
-# Next
+# Version 0.3
+# - Added command to display crontab contents and a check for list user's crontab 
+# - Next
+
+# Version 0.2
+# - A new title - shell escape [./postexp -l]
+# - Edited the development tools as well as the way to extract version from applications/services
+# - Next
+
+# Version 0.1
+# - It's the first time that we release our tool
+# - Next
 
 
 # create variables
@@ -96,6 +91,8 @@ echo "$cyan Linux Kernel 2.6 < 2.6.19$white - https://www.exploit-db.com/exploit
 echo "$cyan Linux Kernel 2.6.0 < 2.6.31 (1)$white - https://www.exploit-db.com/exploits/33321"
 echo "$cyan Linux Kernel 2.6.x (2)$white - https://www.exploit-db.com/exploits/33322"
 echo "$cyan Linux Kernel 2.6.x$white - https://www.exploit-db.com/exploits/30604"
+echo "$cyan Linux Kernel 2.6.39 < 3.2.2 Gentoo / Ubuntu x86-x64 Mempodipper(1)$white - https://www.exploit-db.com/exploits/18411"
+echo "$cyan Linux Kernel 2.6.39 < 3.2.2 x86-x64 Mempodipper(2)$white - https://www.exploit-db.com/exploits/35161"
 }
 
 function Exploits313(){
@@ -1242,5 +1239,4 @@ else
 		fi	
 	fi
 fi
-
 
