@@ -1,3 +1,5 @@
+Version 0.6
+
 # Version 0.6
 # Added search on config and db files on /var/ (using -s option)
 # Exploit's guesses for linux kernel (using -o option)
