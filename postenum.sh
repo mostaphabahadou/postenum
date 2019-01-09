@@ -168,7 +168,7 @@ then
 	Exploits410
 	Exploits440
 else
-	x=3.19
+	x=3.19.0
 	OPERATOR=`echo "$kernel $x" | awk '{if ($1 <= $2 && $1 > 3.12) print "3"; else print "4"}'`
 	if [ "$OPERATOR" == "3" ];
 	then
@@ -187,7 +187,7 @@ else
 			Exploits440
 			Exploits433
 		else
-			w=4.13
+			w=4.13.0
 			OPERATOR=`echo "$kernel $w" | awk '{if ($1 == $2) print "5"; else print "6"}'`
 			if [ "$OPERATOR" == "5" ];
 			then
