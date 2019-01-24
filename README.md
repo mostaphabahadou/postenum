@@ -1,4 +1,4 @@
-Postenum is a clean, nice and easy tool that is intended to be executed locally on a Linux box to enumerate system information and search for common/hidden privilege escalation vectors (misconfiguration, databases files, applicable exploits, escaping shell, clear-text passwords) and more.
+Postenum is a clean, nice and easy tool that is intended to be executed locally on a Linux box to enumerate system information and search for common/hidden privilege escalation vectors (misconfiguration, databases files, applicable exploits, shell escapes, clear-text passwords) and more.
 
 
 * Version 0.6
