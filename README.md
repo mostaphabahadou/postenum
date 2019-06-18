@@ -1,9 +1,6 @@
 # postenum
 Postenum is a clean, nice and easy tool that is intended to be executed locally on a Linux box to enumerate system information and search for common/hidden privilege escalation vectors (misconfiguration, databases files, applicable exploits, shell escapes, clear-text passwords) and more.
 
-# Version 0.6
-
-
 # USE
     ./postenum.sh [option]
     ./postenum.sh -s
@@ -19,3 +16,5 @@ Postenum is a clean, nice and easy tool that is intended to be executed locally 
     -o : Operating system informations
     -v : Software versions
     -t : Fstab credentials and databases checker
+
+# Version 0.6
