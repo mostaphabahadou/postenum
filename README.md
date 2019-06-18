@@ -5,9 +5,9 @@ Postenum is a clean, nice and easy tool that is intended to be executed locally 
 
 
 # USE
-   * Usage  : ./postenum.sh [option]
-   * Example  : ./postenum.sh -c
-   * Example  : ./postenum.sh -s
+   * ./postenum.sh [option]
+   * ./postenum.sh -c
+   * ./postenum.sh -s
         
 # Options :
    * -a : All
