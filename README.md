@@ -18,3 +18,4 @@ Postenum is a clean, nice and easy tool that is intended to be executed locally 
     -t : Fstab credentials and databases checker
 
 # Version 0.6
+Version 0.7 coming soon with advanced privilege escalation techniques and more. 
