@@ -1,55 +1,43 @@
 #!/bin/bash
-clear
+# Version 0.6
 
-# License: GPLv3
-
-# Version 0.7
-
-# Postenum is a clean, nice and easy tool for basic/advanced privilege escalation techniques. Postenum tool is intended to be executed locally on a Linux box.
+# Postenum is a tool to enumerate local informations such as network, system, service, application informations and more, from any Linux box that you find your self you have a limited privileges shell on it. It helps you finding your way to the root privileges.
 
 # CHANGELOGS
-# Version 0.7
-# - Check java and exim versions
-# - Display the content of passwd.master file (OpenBSD)
-# - SElinux status
-# - Check for the existence of Kerberos tickets and GPG keys
-# - Sensitive logfiles owned by root - readable ?
-# - Shell escape - [nmap without --interactive option, man command, vim and vi]
-# - List files based on their Internet address
-# - CPU information
-# - New exploits from 2018/2019
-# - Solved some errors
-# - Next
+# Version 0.1
+# It's the first time that we release our tool
+# Next
 
-# Version 0.6
-# - Added search on config and db files on /var/ (using -s option)
-# - Exploit's guesses for linux kernel (using -o option)
-# - Next
-
-# Version 0.5
-# - Added pkexec version check, and re-write /root and /home/* history files checking (using -v option)
-# - Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
-# - The banner changed
-# - Next
-
-# Version 0.4
-# - Added features such as passwd, shadow (backups files) checks and more..
-# - Solved the previous errors... 
-# - Modified the whole -v option to avoid errors and to display the correct versions
-# - Next
-
-# Version 0.3
-# - Added command to display crontab contents and a check for list user's crontab 
-# - Next
 
 # Version 0.2
-# - A new title - shell escape [./postexp -l]
-# - Edited the development tools as well as the way to extract version from applications/services
-# - Next
+# A new title - shell escape [./postexp -l]
+# Edited the development tools as well as the way to extract version from applications/services
+# Next
 
-# Version 0.1
-# - It's the first time that we release our tool
-# - Next
+
+# Version 0.3
+# Added command to display crontab contents and a check for list user's crontab 
+# Next
+
+
+# Version 0.4
+# Added features such as passwd, shadow (backups files) checks and more..
+# Solved the previous errors... 
+# Modified the whole -v option to avoid errors and to display the correct versions
+# Next
+
+
+# Version 0.5
+# Added pkexec version check, and re-write /root and /home/* history files checking (using -v option)
+# Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
+# The banner changed
+# Next
+
+
+# Version 0.6
+# Added search on config and db files on /var/ (using -s option)
+# Exploit's guesses for linux kernel (using -o option)
+# Next
 
 
 # create variables
@@ -68,7 +56,7 @@ echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.7
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.6
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
@@ -80,65 +68,38 @@ echo ""
 echo ""
 
 function DirtyCow(){
-echo "$cyan Linux Kernel 2.6.22 < 3.9 Dirty Cow$white - https://www.exploit-db.com/exploits/40839"
-echo "$cyan Linux Kernel 2.6.22 < 3.9 Dirty Cow (x86-x64)$white - https://www.exploit-db.com/exploits/40616"
+echo "$cyan Dirty Cow x86-x64$white - https://www.exploit-db.com/exploits/40839"
 }
 
-function Exploits1x(){
+function Exploits410(){
+echo "$cyan Race Condition$white - https://www.exploit-db.com/exploits/43345"
+}
+function Exploits440(){
+echo "$cyan Ubuntu 16.04.4$white - https://www.exploit-db.com/exploits/44298"
+echo "$cyan Ubuntu 14.04/16.04 x86-64$white - https://www.exploit-db.com/exploits/40871"
+}
+function Exploits433(){
+echo "$cyan Ubuntu 14.04/15.10$white - https://www.exploit-db.com/exploits/39166"
+echo "$cyan Overlayfs$white - https://www.exploit-db.com/exploits/39230"
+}
+
+function Exploits413(){
+echo "$cyan Debian 9$white - https://www.exploit-db.com/exploits/44303"
+}
+
+function Exploits2426(){
 echo "$cyan UDEV < 1.4.1 (1)$white - https://www.exploit-db.com/exploits/8478"
 echo "$cyan UDEV < 1.4.1 (2)$white - https://www.exploit-db.com/exploits/8572"
-echo "$cyan Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
-echo "$cyan Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
-echo "$cyan Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
-}
-
-function Exploits2x(){
 echo "$cyan Linux Kernel 2.4.x/2.6.x$white - https://www.exploit-db.com/exploits/9545"
 echo "$cyan Linux Kernel 2.6 < 2.6.19$white - https://www.exploit-db.com/exploits/9542"
-echo "$cyan Linux Kernel 2.6.0 < 2.6.31(1)$white - https://www.exploit-db.com/exploits/33321"
+echo "$cyan Linux Kernel 2.6.0 < 2.6.31 (1)$white - https://www.exploit-db.com/exploits/33321"
 echo "$cyan Linux Kernel 2.6.x (2)$white - https://www.exploit-db.com/exploits/33322"
 echo "$cyan Linux Kernel 2.6.x$white - https://www.exploit-db.com/exploits/30604"
-echo "$cyan Linux Kernel 2.6.39 < 3.2.2 Gentoo / Ubuntu x86-x64 Mempodipper(1)$white - https://www.exploit-db.com/exploits/18411"
-echo "$cyan Linux Kernel 2.6.39 < 3.2.2 x86-x64 Mempodipper(2)$white - https://www.exploit-db.com/exploits/35161"
-echo "$cyan Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
-echo "$cyan Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
-echo "$cyan Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
 }
 
-function Exploits3x(){
-echo "$cyan Linux Kernel 2.6.39 < 3.2.2 Gentoo / Ubuntu x86-x64 Mempodipper(1)$white - https://www.exploit-db.com/exploits/18411"
-echo "$cyan Linux Kernel 2.6.39 < 3.2.2 x86-x64 Mempodipper(2)$white - https://www.exploit-db.com/exploits/35161"
-echo "$cyan Linux Kernel 3.7.6 (RedHat x86/x64)$white - https://www.exploit-db.com/exploits/27297"
+function Exploits313(){
 echo "$cyan Linux Kernel 3.13 < 3.19 Ubuntu 12.04/14.04/14.10/15.04$white - https://www.exploit-db.com/exploits/37292"
 echo "$cyan Linux Kernel 3.13 SGID$white - https://www.exploit-db.com/exploits/33824"
-echo "$cyan Linux Kernel 3.13.1 (Metasploit)$white - https://www.exploit-db.com/exploits/40503"
-echo "$cyan Linux Kernel 3.14.5 (CentOS 7 / RHEL)$white - https://www.exploit-db.com/exploits/35370"
-echo "$cyan Linux Kernel 3.x (Ubuntu 14.04/Mint 17.3/Fedora 22)$white https://www.exploit-db.com/exploits/41999"
-echo "$cyan Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
-echo "$cyan Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
-echo "$cyan Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
-}
-
-function Exploits4x(){
-echo "$cyan Linux Kernel 4.3.3 Overlayfs$white - https://www.exploit-db.com/exploits/39230"
-echo "$cyan Linux Kernel 4.3.3 (Ubuntu 14.04/15.10)$white - https://www.exploit-db.com/exploits/39166"
-echo "$cyan Linux Kernel 4.4.0 (Ubuntu 14.04/16.04 x86-64)$white - https://www.exploit-db.com/exploits/40871"
-echo "$cyan Linux Kernel 4.4.0-21 < 4.4.0-51 (Ubuntu 14.04/16.04 x86-64)$white - https://www.exploit-db.com/exploits/47170"
-echo "$cyan Linux Kernel < 4.4.0-83 / < 4.8.0-58 (Ubuntu 14.04/16.04)$white - https://www.exploit-db.com/exploits/43418"
-echo "$cyan Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
-echo "$cyan Linux Kernel 4.4.1$white - https://www.exploit-db.com/exploits/40003"
-echo "$cyan Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
-echo "$cyan Linux Kernel 4.13 (Debian 9)$white - https://www.exploit-db.com/exploits/44303"
-echo "$cyan Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
-echo "$cyan Linux Kernel 4.14.0-rc4+$white - https://www.exploit-db.com/exploits/43029"
-echo "$cyan Linux Kernel 4.15.x < 4.19.2 (polkit Method)$white - https://www.exploit-db.com/exploits/47167"
-echo "$cyan Linux Kernel 4.15.x < 4.19.2 (cron Method)$white - https://www.exploit-db.com/exploits/47164"
-echo "$cyan Linux Kernel 4.10 < 5.1.17$white - https://www.exploit-db.com/exploits/47163"
-}
-
-function Exploits5x(){
-echo "$cyan Linux Kernel 4.10 < 5.1.17$white - https://www.exploit-db.com/exploits/47163"
-
 }
 
 function OperatingSystem(){
@@ -176,17 +137,6 @@ else
 fi 
 echo ""
 
-echo $boldred"[+] - CPU information"$white
-CPUINFO=`lscpu 2>/dev/null`
-if [ "$CPUINFO" ];
-then
-	echo $yellowintensy"[x] Using lscpu"$white
-	echo "$CPUINFO"
-else
-	:
-fi
-echo""	
-	
 echo $boldred"[+] - Check kernel version"$white
 UNAME=`uname -a 2>/dev/null`
 if [ "$UNAME" ];
@@ -209,159 +159,45 @@ fi
 echo ""
 
 echo $boldred"[+] - Exploits"$white
-underversion2=2.0.0
+y=3.0.0
 kernel=`uname -a | cut -d " " -f "3" | cut -d "-" -f "1"`
-OPERATOR=`echo "$kernel $underversion2" | awk '{if ($1 < $2) print "2"; else print "3"}'`
+OPERATOR=`echo "$kernel $y" | awk '{if ($1 < $2) print "2"; else print "3"}'`
 if [ "$OPERATOR" == "2" ];
 then
 	echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-	echo "Listing the most popular exploits for kernel 4*"
-	echo "------------------------------------------------------"
-	Exploits1x
-	echo -e "\nThe most specific exploits for your kernel $kernel"
-	echo "------------------------------------------------------"
-	Exploits1x > exploits1.txt
-	minimumsize=42
-	actualsize=`wc -c exploits1.txt|cut -d " " -f 1`
-	if [ $actualsize -ge $minimumsize ];
-	then
-		grep '$kernel' exploits1.txt > exploit.txt
-		shred -n 5 -u -z exploits1.txt
-		exploitfilesize=`wc -c exploit.txt|cut -d " " -f 1`
-		if [ $exploitfilesize -ge $minimumsize ];
-		then
-			cat exploit.txt
-			shred -n 5 -u -z exploit.txt
-		else
-			echo "Nothing extract from exploits, for kernel $kernel"
-		fi
-	else
-		echo "Nothing here! But don't give up."
-	fi
+	DirtyCow
+	Exploits2426
+	Exploits410
+	Exploits440
 else
-	underversion3=3.0.0
-	OPERATOR=`echo "$kernel $underversion3" | awk '{if ($1 < $2) print "3"; else print "4"}'`
+	x=3.19
+	OPERATOR=`echo "$kernel $x" | awk '{if ($1 <= $2 && $1 > 3.12) print "3"; else print "4"}'`
 	if [ "$OPERATOR" == "3" ];
 	then
 		echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-		echo "Listing the most popular exploits for kernel 4*"
-		echo "------------------------------------------------------"
-		Exploits3x
 		DirtyCow
-		echo -e "\nThe most specific exploits for your kernel $kernel"
-		echo "------------------------------------------------------"
-		Exploits3x > exploits2.txt
-		DirtyCow >> exploits2.txt
-		minimumsize=42
-		actualsize=`wc -c exploits2.txt|cut -d " " -f 1`
-		if [ $actualsize -ge $minimumsize ];
-		then
-			grep '$kernel' exploits2.txt > exploit.txt
-			shred -n 5 -u -z exploits2.txt
-			exploitfilesize=`wc -c exploit.txt|cut -d " " -f 1`
-			if [ $exploitfilesize -ge $minimumsize ];
-			then
-				cat exploit.txt
-				shred -n 5 -u -z exploit.txt
-			else
-				echo "Nothing extract from exploits, for kernel $kernel"
-			fi
-		else
-			echo "Nothing here! But don't give up."
-		fi
+		Exploits313
+		Exploits410
+		Exploits440
 	else
-		underversion4=4.0.0
-		OPERATOR=`echo "$kernel $underversion4" | awk '{if ($1 < $2) print "4"; else print "5"}'`
+		z=4.10.5
+		OPERATOR=`echo "$kernel $z" | awk '{if ($1 <= $2) print "4"; else print "5"}'`
 		if [ "$OPERATOR" == "4" ];
 		then
 			echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-			echo "Listing the most popular exploits for kernel 4*"
-			echo "------------------------------------------------------"
-			Exploits3x
-			DirtyCow
-			echo -e "\nThe most specific exploits for your kernel $kernel"
-			echo "------------------------------------------------------"
-			Exploits3x > exploits3.txt
-			DirtyCow >> exploits3.txt
-			minimumsize=42
-			actualsize=`wc -c exploits3.txt|cut -d " " -f 1`
-			if [ $actualsize -ge $minimumsize ];
-			then
-				grep '$kernel' exploits3.txt > exploit.txt
-				shred -n 5 -u -z exploits3.txt
-				exploitfilesize=`wc -c exploit.txt|cut -d " " -f 1`
-				if [ $exploitfilesize -ge $minimumsize ];
-				then
-					cat exploit.txt
-					shred -n 5 -u -z exploit.txt
-				else
-					echo "Nothing extract from exploits, for kernel $kernel"
-				fi
-			else
-				echo "Nothing here! But don't give up."
-			fi
+			Exploits410
+			Exploits440
+			Exploits433
 		else
-			underversion5=5.0.0
-			OPERATOR=`echo "$kernel $underversion5" | awk '{if ($1 < $2) print "5"; else print "6"}'`
+			w=4.13
+			OPERATOR=`echo "$kernel $w" | awk '{if ($1 == $2) print "5"; else print "6"}'`
 			if [ "$OPERATOR" == "5" ];
 			then
 				echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-				echo "Listing the most popular exploits for kernel 4*"
-				echo "------------------------------------------------------"
-				Exploits4x
-				echo -e "\nThe most specific exploits for your kernel $kernel"
-				echo "------------------------------------------------------"
-				Exploits4x > exploits4.txt
-				minimumsize=42
-				actualsize=`wc -c exploits4.txt|cut -d " " -f 1`
-				if [ $actualsize -ge $minimumsize ];
-				then
-					grep '$kernel' exploits4.txt > exploit.txt
-					shred -n 5 -u -z exploits4.txt
-					exploitfilesize=`wc -c exploit.txt|cut -d " " -f 1`
-					if [ $exploitfilesize -ge $minimumsize ];
-					then
-						cat exploit.txt
-						shred -n 5 -u -z exploit.txt
-					else
-						echo "Nothing extract from exploits, for kernel $kernel"
-					fi
-				else
-					echo "Nothing here! But don't give up."
-				fi
+				Exploit413
 			else
-				underversion6=6.0.0
-				OPERATOR=`echo "$kernel $underversion6" | awk '{if ($1 < $2) print "6"; else print "7"}'`
-				if [ "$OPERATOR" == "6" ];
-				then
-					echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-					echo "Listing the most popular exploits for kernel 4*"
-					echo "------------------------------------------------------"
-					Exploits5x
-					echo -e "\nThe most specific exploits for your kernel $kernel"
-					echo "------------------------------------------------------"
-					Exploits5x > exploits5.txt
-					minimumsize=42
-					actualsize=`wc -c exploits5.txt|cut -d " " -f 1`
-					if [ $actualsize -ge $minimumsize ];
-					then
-						grep '$kernel' exploits5.txt > exploit.txt
-						shred -n 5 -u -z exploits5.txt
-						exploitfilesize=`wc -c exploit.txt|cut -d " " -f 1`
-						if [ $exploitfilesize -ge $minimumsize ];
-						then
-							cat exploit.txt
-							shred -n 5 -u -z exploit.txt
-						else
-							echo "Nothing extract from exploits, for kernel $kernel"
-						fi
-					else
-						echo "Nothing here! But don't give up."
-					fi
-				else
-					echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
-					echo $cyan"Nothing in our database on kernel $kernel. You still need to check using google search."$white
-				fi
+				echo $yellowintensy"[x] Possible exploits for linux kernel $kernel"$white
+				echo $cyan"You still need to check other exploits"$white
 			fi
 		fi
 	fi
@@ -485,11 +321,10 @@ INTERFACE=`cat /etc/network/interfaces 2>/dev/null`
 if [ "$INTERFACE" ];
 then
 	echo $yellowintensy"[x] Available network interfaces on the system : /etc/network/interfaces"$white
-	echo "$INTERFACE"
+	echo -e "$INTERFACE\n"
 else
 	:
 fi
-echo ""
 
 HOST=`cat /etc/hosts 2>/dev/null`
 if [ "$HOST" ];
@@ -507,40 +342,28 @@ RESOLV=`cat /etc/resolv.conf 2>/dev/null`
 if [ "$RESOLV" ];
 then
 	echo $yellowintensy"[x] /etc/resolv.conf"$white
-	echo "$RESOLV"
+	echo -e "$RESOLV\n"
 else
 	:
 fi
-echo ""
 
 NETWORK=`cat /etc/networks 2>/dev/null`
 if [ "$NETWORK" ];
 then
 	echo $yellowintensy"[x] /etc/networks"$white
-	echo "$NETWORK"
+	echo -e "$NETWORK\n"
 else
 	:
 fi
-
-SELinux=`getenforce 2>/dev/null`
-if [ "$SELinux" ];
-then
-	echo $yellowintensy"[x] SELinux status"$white
-	echo "$SELinux"
-else
-	:
-fi
-echo ""
 
 IPTABLE=`iptables -L 2>/dev/null`
 if [ "$IPTABLE" ];
 then
 	echo $yellowintensy"[x] Packet filter rules : iptables -L"$white
-	echo "$IPTABLE"
+	echo -e "$IPTABLE\n"
 else
 	:
 fi
-echo ""
 
 HOSTNAME=`hostname 2>/dev/null`
 if [ "$HOSTNAME" ];
@@ -571,16 +394,6 @@ then
 else
 	:
 fi
-
-LSOF=`lsof -Pi 2>/dev/null`
-if [ "$LSOF" ];
-then
-	echo $yellowintensy"[x] list files based on their Internet address"$white
-	echo -e "$LSOF\n"
-else
-	:
-fi
-
 LAST=`last 2>/dev/null`
 if [ "$LAST" ];
 then
@@ -639,7 +452,7 @@ HOMEUSERS=`for x in $(ls /home) ; do echo $x ; done`
 if [ "$HOMEUSERS" ];
 then
 	echo $yellowintensy"[x] Useful home users"$white
-	echo -e $cyan"$HOMEUSERS\n"$white
+	echo -e $cyan"$HOMEUSERS \n"$white
 else
 	:
 fi
@@ -667,11 +480,12 @@ MASTERPASS=`cat /etc/master.passwd 2>/dev/null`
 if [ "$MASTERPASS" ];
 then
 	echo $yellowintensy"[x] Master passwd from /etc/master.passwd"$white
-	echo $cyan"[/] Readable - /etc/master.passwd"$white
+	echo $cyan"/etc/master.passwd"$white
 	echo -e "$MASTERPASS\n"
 else
 	:
 fi
+echo ""
 
 SUDOPASS=`echo '' | sudo -S -l -k 2>/dev/null`
 if [ "$SUDOPASS" ];
@@ -819,14 +633,14 @@ echo ""
 echo $boldred"[+] - Check for plain text password"$white
 if [ -e ~/.bash_history ];
 then
-	echo $yellowintensy"[x] ~/.bash_history - check the whole file"$white
+	echo $yellowintensy"[x] ~/.bash_history"$white
 	head ~/.bash_history ; echo ""
 else
 	echo $blu"~/.bash_history file doesn't exist"$white
 fi
 if [ -e ~/.nano_history ];
 then
-	echo $yellowintensy"[x] ~/.nano_history - check the whole file"$white
+	echo $yellowintensy"[x] ~/.nano_history"$white
 	head ~/.nano_history ; echo ""
 else
 	echo $blu"~/.nano_history file doesn't exist"$white
@@ -834,20 +648,21 @@ fi
 
 if [ -e ~/.mysql_history ];
 then
-	echo $yellowintensy"[x] ~/.mysql_history - check the whole file"$white
+	echo $yellowintensy"[x] ~/.mysql_history"$white
 	head ~/.mysql_history ; echo ""
 else
 	echo $blu"~/.mysql_history file doesn't exist"$white
 fi
 if [ -e ~/.php_history ];
 then
-	echo $yellowintensy"[x] ~/.php_history - check the whole file"$white
+	echo $yellowintensy"[x] ~/.php_history"$white
 	head ~/.php_history ; echo ""
 else
 	echo $blu"~/.php_history file doesn't exist"$white ; echo ""
 fi
 
 echo $boldred"[+] - Check SSH Dir/Files"$white
+
 if [ -d /home/*/.ssh ];
 then
 	if [ -r /home/*/.ssh ];
@@ -881,46 +696,15 @@ then
 else
 	:
 fi
-
 ROOTLOGIN=`grep "PermitRootLogin" /etc/ssh/sshd_config 2>/dev/null | grep -v "#" | awk '{print $2}'`
 if [ "$ROOTLOGIN" ];
 then
 	echo $cyan"[/] Root is allowed to login via SSH"$white
-	echo -e "$ROOTLOGIN\n"
+	echo -e "$ROOTLOGIN"
 else
 	:
 fi
 echo ""
-echo $boldred"[+] - Check PGP keys and Kerberos tickets"$white
-PGPKEY=`ls -l /home/*/.gnupg/secring.gpgs 2>/dev/null`
-if [ "$PGPKEY" ];
-then
-	echo $yellowintensy"[x] PGP keys"$white
-	echo $cyan"$PGPKEY"$white
-else
-	:
-fi
-echo ""
-
-Kerberos1=`ls -l /tmp/krb5.keytab 2>/dev/null`
-Kerberos2=`ls -l /tmp/krb5cc_* 2>/dev/null`
-if [ "$Kerberos1" ] || [ "$Kerberos2" ];
-then
-	echo $yellowintensy"[x] Kerberos tickets"$white
-	if [ "$Kerberos1" ];
-	then
-		echo $cyan"$Kerberos1"$white
-	else
-		:
-	fi
-
-	if [ "$Kerberos2" ];
-	then
-		echo $cyan"$Kerberos2"$white
-	else
-		:
-	fi
-fi
 echo $boldred"[+] - Check password policy information"$white
 LOGINDEFS=`grep "^PASS_MAX_DAYS\|^PASS_MIN_DAYS\|^PASS_WARN_AGE\|^ENCRYPT_METHOD" /etc/login.defs 2>/dev/null`
 
@@ -1069,11 +853,12 @@ else
 fi
 echo ""
 
-echo $boldred"[+] - Check for written and executable places"$white
 WRITABLE=`find / -perm -222 -type d 2>/dev/null`
+echo $boldred"[+] - Check for written and executable places"$white
+
 if [ "$WRITABLE" ];
 then
-	echo $yellowintensy"[x] World-writeable folder - 222"$white
+	echo $yellowintensy"[x] World-writeable folder"$white
 	echo -e "$WRITABLE\n"     # world-writeable folders
 else
 	:
@@ -1089,16 +874,6 @@ else
 fi
 echo ""
 
-echo $boldred"[+] - Check for readable logfiles owned by super user"$white	
-LOGFILES=`find /var/log -type f -perm -0004 -user root -exec ls -l {} \; 2>/dev/null`
-if [ "$LOGFILES" ];
-then
-	echo $yellowintensy"[x] Sensitive logfiles - 0004"$white
-	echo $cyan"$LOGFILES"$white
-else
-	:
-fi
-echo ""
 }
 
 function DevToolsAndLang(){
@@ -1219,13 +994,11 @@ echo "php    =	php -r 'system(\"/bin/sh\");'"
 echo "ruby   =	ruby -e 'exec \"/bin/sh\"'"
 echo "less   =	!sh"
 echo "more   =	!sh"
-echo "man    =	!sh"
 echo "nmap   =	--interactive"
-echo "nmap   =	echo \"os.execute('/bin/sh')\" > /tmp/shell.nse"
 echo "find   =	find / -exec /usr/bin/awk 'BEGIN {system(\"/bin/sh\")}' \;"
 echo "find   =	find / -exec sh -i \;"
-echo "vi     =	:!sh or :shell or -c '!sh'"
-echo "vim    =	:!sh or :shell or -c '!sh'"
+echo "vi     =	:!sh or :shell"
+echo "vim    =	:!sh or :shell"
 echo ""
 }
 
@@ -1237,7 +1010,7 @@ echo $boldred"[+] - Check apps and services version"$white
 SUDOVER=`which sudo`
 if [ "$SUDOVER" ];
 then
-	echo $yellowintensy"[x] Sudo version (<= 1.8.20)"$white
+	echo $yellowintensy"[x] Sudo version"$white
 	sudo -V | grep -i "version" | grep "Sudo " 2>/dev/null
 else
 	:
@@ -1286,7 +1059,7 @@ echo ""
 CHKROOTKIT=`which chkrootkit 2>/dev/null`
 if [ "$CHKROOTKIT" ];
 then
-	echo $yellowintensy"[x] Chkrootkit version (< 0.50)"$white
+	echo $yellowintensy"[x] Chkrootkit version"$white
 	chkrootkit -V
 else
 	:
@@ -1303,30 +1076,13 @@ else
 fi
 echo""
 
-JAVA=`which java 2>/dev/null`
-if [ "$JAVA" ];
-then
-	echo $yellowintensy"[x] Java version"$white
-	java -version
-else
-	:
-fi
-echo ""
-
-EXIM=`exim -bV 2>/dev/null`
-if [ "$EXIM" ];
-then
-	echo $yellowintensy"[x] Exim version (<= 4.91)"$white
-	echo -e "$EXIM\n"
-else
-	:
-fi
 }
 
 function TryingAccess(){
 echo $boldgrn"[-] TRYING ACCESS"$white
 echo $boldred"[+] - Check for some methods for extract creds and get access as root"$white
 
+#thanks to LinEnum.sh
 MYSQLCONNECT=`mysqladmin -uroot -proot version 2>/dev/null`
 if [ "$MYSQLCONNECT" ];
 then
@@ -1408,18 +1164,19 @@ then
 else
 	:
 fi
+
 }
 
 function Usage(){
 echo $boldgrn" Usage   > ./postenum.sh <option>"$white
 echo " Options >"
 echo "	-a :	All"
-echo "	-s :	Filesystem [SUID, SGID, Config/DB files, etc.]"
+echo "	-s :	Filesystem [SUID, SGID..]"
 echo "	-l :	Shell escape and development tools"
 echo "	-c :	The most interesting files"
 echo "	-n :	Network settings"
 echo "	-p :	Services and cron jobs"
-echo "	-o :	OS informations and priv esc exploits"
+echo "	-o :	Operating system informations"
 echo "	-v :	Sofware's versions"
 echo "	-t :	Fstab credentials and databases checker"
 echo ""
@@ -1484,3 +1241,5 @@ else
 		fi	
 	fi
 fi
+
+
