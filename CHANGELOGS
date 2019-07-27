@@ -1,4 +1,18 @@
-Version 0.6
+Version 0.7
+
+Version 0.7
+- Check java and exim versions
+- Display the content of passwd.master file (OpenBSD)
+- SElinux status
+- Check for the existence of Kerberos tickets and GPG keys
+- Sensitive logfiles owned by root - readable ? 
+- Shell escape - [nmap without --interactive option, man command, vim and vi]
+- List files based on their Internet address
+- CPU information
+- New exploits from 2018/2019
+- Solved some errors
+- Next
+
 
 Version 0.6
 - Added search on config and db files on /var/ (using -s option)
