@@ -537,7 +537,6 @@ if [ "$IPTABLE" ];
 then
 	echo $yellowintensy"[x] Packet filter rules : iptables -L"$white
 	echo "$IPTABLE"
-	wait 
 else
 	:
 fi
