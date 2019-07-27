@@ -17,5 +17,4 @@ Postenum is a clean, nice and easy tool for basic/advanced privilege escalation 
     -v : Software versions
     -t : Fstab credentials and databases checker
 
-# Version 0.6
-Version 0.7 coming soon with advanced privilege escalation techniques and more. 
+# Version 0.7
