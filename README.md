@@ -8,12 +8,12 @@ Postenum is a clean, nice and easy tool for basic/advanced privilege escalation 
         
 # Options :
     -a : All
-    -s : Filesystem [SUID, SGID..]
+    -s : Filesystem [SUID, SGID, Config/DB files, etc.]
     -l : Shell escape and development tools
     -c : The most interesting files
     -n : Network settings
     -p : Services and cron jobs
-    -o : Operating system informations
+    -o : OS informations and priv esc exploits
     -v : Software versions
     -t : Fstab credentials and databases checker
 
