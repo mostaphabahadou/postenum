@@ -15,14 +15,13 @@ Be more than a normal user. be the ROOT.
     -c : The most interesting files
     -n : Network settings
     -p : Services and cron jobs
-    -o : OS informations and priv esc exploits
+    -o : OS informations and kernel exploits
     -v : Software's versions
     -t : Fstab credentials and databases checker
 
 # Install.sh
-You can use install.sh script to install postenum. (only for system/network admins).
-
-# USE
+You can use install.sh script to install postenum. (only for system/network admins). to run it:
+    
     ./install.sh
 
 # Version 0.8
