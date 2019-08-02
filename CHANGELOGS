@@ -1,4 +1,22 @@
-Version 0.7
+Version 0.8
+
+License: MIT
+
+Version 0.8
+  - Replace the non-standard 'which' with the builtin command 'command -v'
+  - Replace the legacy backticked `..` with the notation $(..)
+  - Replace 'ls' directories with for loops
+  - Udev vulnerable version check
+  - List all environments variables and list available shells
+  - Gdb shell escape
+  - World-writable files (directories already exist)
+  - Hidden files and clear-text passowrd/pass check
+  - Accessible .rhosts files
+  - Installation script for system/network admins (hard symbolic link)
+  - List NFS shares and permisisons
+  - Process binaries and umask check
+  - Better code and more..
+  - Next
 
 Version 0.7
 - Check java and exim versions
