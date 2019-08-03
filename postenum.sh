@@ -459,7 +459,7 @@ function AppsAndServices(){
 	AUX=$(ps aux 2>/dev/null)
 	if [ "$AUX" ];
 	then
-		echo $yellowintensy"[x] Dispaly every process on the system:"$white
+		echo $yellowintensy"[x] Display every process on the system:"$white
 		echo -e "$AUX\n"
 	else
 		:
@@ -662,7 +662,7 @@ function ConfidentialInfoAndUser(){
 		:
 	fi
 
-	PASSWD=$(cat /etc/passwd grep "/bin/bash\|/bin/sh\|/bin/dash" 2>/dev/null)
+	PASSWD=$(cat /etc/passwd | grep "/bin/bash\|/bin/sh\|/bin/dash" 2>/dev/null)
 	if [ "$PASSWD" ];
 	then
 		echo $yellowintensy"[x] Anything with /bin/bash /bin/sh /bin/dash:"$white
