@@ -21,14 +21,14 @@ function Install(){
 		then
 			echo $grnintensy"[+] Postenum already exist!"$white
 		else
-	        sudo ln "${RUN}/postenum.sh" /usr/local/bin/postenum
-	        if [ -e /usr/local/bin/postenum ];
-	        then
-	        	echo $grnintensy"[+] Postenum installed successfully - /usr/local/bin/postenum"$white
-	        else
-	        	echo $redintensy"[-] Postenum still not installed, check again !"$white
-	        fi
-	    fi
+			sudo ln "${RUN}/postenum.sh" /usr/local/bin/postenum
+			if [ -e /usr/local/bin/postenum ];
+			then
+				echo $grnintensy"[+] Postenum installed successfully - /usr/local/bin/postenum"$white
+			else
+				echo $redintensy"[-] Postenum still not installed, check again !"$white
+			fi
+		fi
 	else
 	        echo $redintensy"[-] Check again, something wrong !"$white
 	fi
