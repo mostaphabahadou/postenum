@@ -21,9 +21,3 @@ Be more than a normal user. be the ROOT.
 # Demo:
 ![PostenumDemo](https://github.com/mbahadou/postenum/raw/master/demo.gif)
 
-# Install.sh
-You can use install.sh script to install postenum. (only for system/network admins). to run it:
-    
-    ./install.sh
-
-# Version 0.8
