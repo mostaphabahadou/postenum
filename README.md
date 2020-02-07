@@ -3,12 +3,12 @@ Postenum is a clean, nice and easy tool for basic/advanced privilege escalation 
 
 Be more than a normal user. be the ROOT.
 
-# USE
+# Usage:
     ./postenum.sh [option]
     ./postenum.sh -s
     ./postenum.sh -c
 
-# Options :
+# Options:
     -a : All
     -s : Filesystem [SUID, SGID, Config/DB files, etc.]
     -l : Shell escape and development tools
@@ -18,6 +18,8 @@ Be more than a normal user. be the ROOT.
     -o : OS informations and kernel exploits
     -v : Software's versions
     -t : Fstab credentials and databases checker
+# Demo:
+![PostenumDemo](https://github.com/mbahadou/postenum/raw/master/demo.gif)
 
 # Install.sh
 You can use install.sh script to install postenum. (only for system/network admins). to run it:
