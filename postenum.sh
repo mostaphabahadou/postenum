@@ -588,7 +588,10 @@ function CommAndNet(){
 		echo $yellowintensy"[x] Display all TCP/UDP connected socket, PID/program:"$white
 		echo -e "$NETSTAT\n"
 	else
-		:
+		#alternative to netstat
+		SS=$(ss -tuln 2>/dev/null)
+		echo $yellowintensy"[x] Display all TCP/UDP connected socket, PID/program:"$white
+		echo -e "$SS\n"
 	fi
 
 	LSOF=$(lsof -Pi 2>/dev/null)
