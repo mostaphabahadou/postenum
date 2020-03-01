@@ -1,6 +1,15 @@
-Version 0.8
+Version 0.9
 
 License: MIT
+
+Version 0.9
+  - Permission denied msg fixed
+  - Backup msg for non executed commands 
+  - Added new techniques for restricted linux shell escaping
+  - Added new methods for Linux upload files
+  - Root / files/folders list
+  - Organized & Clean and more
+  - Next
 
 Version 0.8
   - Replace the non-standard 'which' with the builtin command 'command -v'
