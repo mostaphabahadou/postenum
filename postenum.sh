@@ -3,17 +3,28 @@ clear
 
 # License: MIT
 
-# Version 0.8
+# Version 0.9
 
 # Postenum is a clean, nice and easy tool for basic/advanced privilege escalation techniques. Postenum tool is intended to be executed locally on a Linux box.
-# A tool to increase the chance of success (Get Root), using different old/new tricks, techniques, approaches, and exploits, in the world of hacking/pentration testing.
+# A tool to increase the chance of success (Be Root User), using different old/new tricks, techniques, approaches, and exploits, in the world of hacking/pentration testing.
 # Be more than a normal user. be the ROOT.
 
+# For help or reporting issues, create pull requests, visit https://github.com/mbahadou/postenum
+
 # CHANGELOGS
+# Version 0.9
+# - Permission denied msg fixed
+# - Backup msg for non executed commands 
+# - Added new techniques for restricted linux shell escaping
+# - Added new methods for Linux upload files
+# - Root / files/folders list
+# - Organized & Clean and more
+# - Next
+
 # Version 0.8
 # - Replace the non-standard 'which' with the builtin command 'command -v'
 # - Replace the legacy backticked `..` with the notation $(..)
-# - Replace 'ls' directories with for loops
+# - Replace 'ls' directories with 'for loops'
 # - Udev vulnerable version check
 # - List all environments variables and list available shells
 # - Gdb shell escape
@@ -79,18 +90,18 @@ grnintensy=$'\e[0;92m'
 whiteboldintensy=$'\e[1;97m'
 redintensy=$'\e[0;91m'
 
-echo $whiteboldintensy"--------------------------------------------------------------------------"
+echo $whiteboldintensy"----------------------------------------------------------------------------"
 echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.8
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.9
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
 "$white
 echo "POST-ENUMERATION$grnintensy by mbahadou"$white
-echo $whiteboldintensy"--------------------------------------------------------------------------"$white
+echo $whiteboldintensy"----------------------------------------------------------------------------"$white
 echo ""
 echo " postenum - be the ROOT"
 echo " For help or reporting issues, visit https://github.com/mbahadou/postenum"
@@ -161,80 +172,76 @@ function Exploits5x(){
 
 function OperatingSystem(){
 	echo $boldgrn"[-] OPERATING SYSTEM"$white
-	echo $cyan"[+] - Check current user and group information"$white
+	echo $cyan"[+] - Check current user and group information:"$white
+	echo $yellowintensy"[x] The current user and group information:"$white
 	ID=$(id 2>/dev/null)
 	if [ "$ID" ];
 	then
-		echo $yellowintensy"[x] The current user and group information:"$white
 		echo -e "$ID\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'id' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] The current user:"$white
 	WHOAMI=$(whoami 2>/dev/null)
 	if [ "$WHOAMI" ];
 	then
-		echo $yellowintensy"[x] The current user:"$white
-		echo "$WHOAMI"
+		echo -e "$WHOAMI\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'whoami' not found or empty output!\n"
 	fi
-	echo ""
 
+	echo $cyan"[+] - Check distribution type and version number:"$white
+	echo $yellowintensy"[x] The distribution type and version:"$white
 	RELEASE=$(cat /etc/*-release 2>/dev/null)
 	if [ "$RELEASE" ];
 	then
-		echo $cyan"[+] - Check distribution type and version number"$white
-		echo $yellowintensy"[x] The distribution type and version:"$white
-		echo "$RELEASE"
+		echo -e "$RELEASE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi 
-	echo ""
 
+	echo $cyan"[+] - CPU information:"$white
+	echo $yellowintensy"[x] CPU architecture information from sysfs and /proc/cpuinfo:"$white
 	CPUINFO=$(lscpu 2>/dev/null)
 	if [ "$CPUINFO" ];
 	then
-		echo $cyan"[+] - CPU information"$white
-		echo $yellowintensy"[x] CPU architecture information from sysfs and /proc/cpuinfo:"$white
-		echo "$CPUINFO"
+		echo -e "$CPUINFO\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'lscpu' not found or empty output!\n"
 	fi
-	echo""	
 		
-	echo $cyan"[+] - Check kernel version"$white
+	echo $cyan"[+] - Check kernel version:"$white
+	echo $yellowintensy"[x] Kernel version and (32-bit/64-bit):"$white
 	UNAME=$(uname -a 2>/dev/null)
 	if [ "$UNAME" ];
 	then
-		echo $yellowintensy"[x] Kernel version and (32-bit/64-bit):"$white
 		echo -e "$UNAME\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'uname' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Kernel version and gcc version used to compile the kernel:"$white
 	PROCVERSION=$(cat /proc/version 2>/dev/null)
 	if [ "$PROCVERSION" ];
 	then
-		echo $yellowintensy"[x] Kernel version and gcc version used to compile the kernel:"$white
-		echo "$PROCVERSION"
+		echo -e "$PROCVERSION\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Exploits"$white
+	echo $cyan"[+] - Exploits:"$white
 	underversion2=2.0.0
 	kernel=$(uname -a | cut -d " " -f "3" | cut -d "-" -f "1")
 	OPERATOR=$(echo "$kernel $underversion2" | awk '{if ($1 < $2) print "2"; else print "3"}')
 	if [ "$OPERATOR" == "2" ];
 	then
 		echo $yellowintensy"[x] Possible exploits for linux kernel $kernel:"$white
-		echo "Listing the most popular exploits for kernel 4*"
-		echo "------------------------------------------------------"
+		echo "Popular 'possible not sure' exploits for kernel $kernel"
+		echo "-----------------------------------------------------------"
 		Exploits1x
 		echo -e "\nThe most specific exploits for your kernel $kernel"
-		echo "------------------------------------------------------"
+		echo "-----------------------------------------------------------"
 		Exploits1x > exploits1.txt
 		minimumsize=42
 		actualsize=$(wc -c exploits1.txt|cut -d " " -f 1)
@@ -248,7 +255,7 @@ function OperatingSystem(){
 				cat exploit.txt
 				shred -n 5 -u -z exploit.txt
 			else
-				echo "Nothing extract from exploits, for kernel $kernel"
+				echo "No accurate exploit, for kernel $kernel - use google search!"
 			fi
 		else
 			echo "Nothing here! But don't give up."
@@ -259,12 +266,12 @@ function OperatingSystem(){
 		if [ "$OPERATOR" == "3" ];
 		then
 			echo $yellowintensy"[x] Possible exploits for linux kernel $kernel:"$white
-			echo "Listing the most popular exploits for kernel 4*"
-			echo "------------------------------------------------------"
+			echo "Popular 'possible not sure' exploits for kernel $kernel"
+			echo "-----------------------------------------------------------"
 			Exploits3x
 			DirtyCow
 			echo -e "\nThe most specific exploits for your kernel $kernel"
-			echo "------------------------------------------------------"
+			echo "-----------------------------------------------------------"
 			Exploits3x > exploits2.txt
 			DirtyCow >> exploits2.txt
 			minimumsize=42
@@ -279,7 +286,7 @@ function OperatingSystem(){
 					cat exploit.txt
 					shred -n 5 -u -z exploit.txt
 				else
-					echo "Nothing extract from exploits, for kernel $kernel"
+					echo "No accurate exploit, for kernel $kernel - use google search!"
 				fi
 			else
 				echo "Nothing here! But don't give up."
@@ -290,12 +297,12 @@ function OperatingSystem(){
 			if [ "$OPERATOR" == "4" ];
 			then
 				echo $yellowintensy"[x] Possible exploits for linux kernel $kernel:"$white
-				echo "Listing the most popular exploits for kernel 4*"
-				echo "------------------------------------------------------"
+				echo "Popular 'possible not 100% sure' exploits for kernel $kernel"
+				echo "-----------------------------------------------------------"
 				Exploits3x
 				DirtyCow
 				echo -e "\nThe most specific exploits for your kernel $kernel"
-				echo "------------------------------------------------------"
+				echo "-----------------------------------------------------------"
 				Exploits3x > exploits3.txt
 				DirtyCow >> exploits3.txt
 				minimumsize=42
@@ -310,7 +317,7 @@ function OperatingSystem(){
 						cat exploit.txt
 						shred -n 5 -u -z exploit.txt
 					else
-						echo "Nothing extract from exploits, for kernel $kernel"
+						echo "No accurate exploit, for kernel $kernel - use google search!"
 					fi
 				else
 					echo "Nothing here! But don't give up."
@@ -321,11 +328,11 @@ function OperatingSystem(){
 				if [ "$OPERATOR" == "5" ];
 				then
 					echo $yellowintensy"[x] Possible exploits for linux kernel $kernel:"$white
-					echo "Listing the most popular exploits for kernel 4*"
-					echo "------------------------------------------------------"
+					echo "Popular 'possible not sure' exploits for kernel $kernel"
+					echo "-----------------------------------------------------------"
 					Exploits4x
 					echo -e "\nThe most specific exploits for your kernel $kernel"
-					echo "------------------------------------------------------"
+					echo "-----------------------------------------------------------"
 					Exploits4x > exploits4.txt
 					minimumsize=42
 					actualsize=$(wc -c exploits4.txt|cut -d " " -f 1)
@@ -339,7 +346,7 @@ function OperatingSystem(){
 							cat exploit.txt
 							shred -n 5 -u -z exploit.txt
 						else
-							echo "Nothing extract from exploits, for kernel $kernel"
+							echo "No accurate exploit, for kernel $kernel - use google search!"
 						fi
 					else
 						echo "Nothing here! But don't give up."
@@ -350,11 +357,11 @@ function OperatingSystem(){
 					if [ "$OPERATOR" == "6" ];
 					then
 						echo $yellowintensy"[x] Possible exploits for linux kernel $kernel:"$white
-						echo "Listing the most popular exploits for kernel 4*"
-						echo "------------------------------------------------------"
+						echo "Popular 'possible not sure' exploits for kernel $kernel"
+						echo "-----------------------------------------------------------"
 						Exploits5x
 						echo -e "\nThe most specific exploits for your kernel $kernel"
-						echo "------------------------------------------------------"
+						echo "-----------------------------------------------------------"
 						Exploits5x > exploits5.txt
 						minimumsize=42
 						actualsize=$(wc -c exploits5.txt|cut -d " " -f 1)
@@ -368,7 +375,7 @@ function OperatingSystem(){
 								cat exploit.txt
 								shred -n 5 -u -z exploit.txt
 							else
-								echo "Nothing extract from exploits, for kernel $kernel"
+								echo "No accurate exploit, for kernel $kernel - use google search!"
 							fi
 						else
 							echo "Nothing here! But don't give up."
@@ -386,327 +393,321 @@ function OperatingSystem(){
 
 function AppsAndServices(){
 	echo $boldgrn"[-] APPS and SERVICES"$white
-	echo $cyan"[+] - Check jobs scheduled"$white
+	echo $cyan"[+] - Check jobs scheduled:"$white
+	echo $yellowintensy"[x] Search on cron in /etc:"$white
 	CRON=$(for x in "/etc"; do ls -l "$x"; done | grep cron 2>/dev/null)
 	if [ "$CRON" ];
 	then
-		echo $yellowintensy"[x] Search on cron in /etc:"$white
 		echo -e "$CRON\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the '*cron* path' not found or empty output!\n"
 	fi
 
-	CROND=$(for x in "/etc/cron.d/"; do ls -l "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] List /etc/cron.d/:"$white
+	CROND=$(for x in "/etc/cron.d/"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CROND"  ];
 	then
-		echo $yellowintensy"[x] List /etc/cron.d/"$white
 		echo -e "$CROND\n"
 		echo $yellowintensy"[x] Root's cron jobs:"$white
 		crontab -l
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+		echo $yellowintensy"[x] Root's cron jobs:"$white
+		crontab -l
 	fi
 	echo ""
 
+	echo $yellowintensy"[x] The content of /etc/crontab:"$white
 	CRONTAB=$(cat /etc/crontab 2>/dev/null)
 	if [ "$CRONTAB"  ];
 	then
-		echo $yellowintensy"[x] The content of /etc/crontab:"$white
 		echo -e "$CRONTAB\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
-	CRONDAILY=$(for x in "/etc/cron.daily"; do ls -l "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] View daily cron jobs:"$white
+	CRONDAILY=$(for x in "/etc/cron.daily"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CRONDAILY" ];
 	then
-		echo $yellowintensy"[x] View daily cron jobs:"$white
 		echo -e "$CRONDAILY\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
-	CRONDHOURLY=$(for x in "/etc/cron.hourly"; do ls -l "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] View hourly cron jobs:"$white
+	CRONDHOURLY=$(for x in "/etc/cron.hourly"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CRONDHOURLY" ];
 	then
-		echo $yellowintensy"[x] View hourly cron jobs:"$white
 		echo -e "$CRONDHOURLY\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi 
 
-	CRONDMONTHLY=$(for x in "/etc/cron.monthly"; do ls -l "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] View monthly cron jobs:"$white
+	CRONDMONTHLY=$(for x in "/etc/cron.monthly"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CRONDMONTHLY" ];
 	then
-		echo $yellowintensy"[x] View monthly cron jobs:"$white
-		echo "$CRONDMONTHLY"
+		echo -e "$CRONDMONTHLY\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi 
-	echo ""
 
-	CRONDWEEKLY=$(for x in "/etc/cron.weekly"; do ls -l "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] View weekly cron jobs:"$white
+	CRONDWEEKLY=$(for x in "/etc/cron.weekly"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CRONDWEEKLY" ];
 	then
-		echo $yellowintensy"[x] View weekly cron jobs:"$white
-		echo "$CRONDWEEKLY"
+		echo -e "$CRONDWEEKLY\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi 
-	echo ""
 
-	echo $cyan"[+] - Check for running services, and which service(s) are been running by root"$white
+	echo $cyan"[+] - Check for running services, and which service(s) are been running by root:"$white
+	echo $yellowintensy"[x] Display every process on the system:"$white
 	AUX=$(ps aux 2>/dev/null)
 	if [ "$AUX" ];
 	then
-		echo $yellowintensy"[x] Display every process on the system:"$white
 		echo -e "$AUX\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'ps' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Process binaries and permissions:"$white
 	PROCESSBINARY=$(ps aux | awk '{print $11}'| xargs -r ls -la 2>/dev/null | awk '!x[$0]++' 2>/dev/null)
 	if [ "$PROCESSBINARY" ];
 	then
-  		echo $yellowintensy"[x] Process binaries and permissions:"$white
   		echo -e "$PROCESSBINARY\n"
   	else
-  		:
+  		echo -e "None -> Probably needs more privileges(sudo), the command 'ps,xargs,awk' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Display every process running by root on the system:"$white
 	AUXROOT=$(ps aux | grep root 2>/dev/null)
 	if [ "$AUXROOT" ];
 	then
-		echo $yellowintensy"[x] Display every process running by root on the system:"$white
 		echo -e "$AUXROOT\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'ps' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Is mysql running by root:"$white
 	MYSQL=$(ps aux | grep mysql 2>/dev/null)
 	if [ "$MYSQL" ];
 	then
-		echo $yellowintensy"[x] Is mysql running by root:"$white
-		echo $redintensy"$MYSQL"$white
+		echo -e $redintensy"$MYSQL\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'ps' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 function CommAndNet(){
 	echo $boldgrn"[-] COMMUNICATING and NETWORKING"$white
-	echo $cyan"[+] - Check NIC(s) does the system have"$white
+	echo $cyan"[+] - Check NIC(s) does the system have:"$white
+	echo $yellowintensy"[x] Display all interfaces which are currently available:"$white
 	IFCONFIG=$(ifconfig -a 2>/dev/null)
 	if [ "$IFCONFIG" ];
 	then
-		echo $yellowintensy"[x] Display all interfaces which are currently available:"$white
 		echo -e "$IFCONFIG\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'ifconfig' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Available network interfaces on the system:"$white
 	INTERFACE=$(cat /etc/network/interfaces 2>/dev/null)
 	if [ "$INTERFACE" ];
 	then
-		echo $yellowintensy"[x] Available network interfaces on the system:"$white
 		echo -e "$INTERFACE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Hosts:"$white
 	HOST=$(cat /etc/hosts 2>/dev/null)
 	if [ "$HOST" ];
 	then
-		echo $yellowintensy"[x] Hosts:"$white
-		echo "$HOST"
+		echo -e "$HOST\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check network configuration settings"$white
+	echo $cyan"[+] - Check network configuration settings:"$white
+	echo $yellowintensy"[x] DNS name servers:"$white
 	RESOLV=$(cat /etc/resolv.conf 2>/dev/null)
 	if [ "$RESOLV" ];
 	then
-		echo $yellowintensy"[x] DNS name servers:"$white
 		echo -e "$RESOLV\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Networks:"$white
 	NETWORK=$(cat /etc/networks 2>/dev/null)
 	if [ "$NETWORK" ];
 	then
-		echo $yellowintensy"[x] Networks:"$white
 		echo -e "$NETWORK\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] SELinux enabled - status:"$white
 	SELinux=$(sestatus 2>/dev/null)
 	if [ "$SELinux" ];
 	then
-		echo $yellowintensy"[x] SELinux enabled - status:"$white
 		echo -e "$SELinux\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'sestatus' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Packet filter rules:"$white
 	IPTABLE=$(iptables -L 2>/dev/null)
 	if [ "$IPTABLE" ];
 	then
-		echo $yellowintensy"[x] Packet filter rules:"$white
 		echo -e "$IPTABLE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'iptables' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] hostname:"$white
 	HOSTNAME=$(hostname 2>/dev/null)
 	if [ "$HOSTNAME" ];
 	then
-		echo $yellowintensy"[x] hostname:"$white
 		echo -e "$HOSTNAME\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'hostname' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Get DNS domain or the FQDN:"$white
 	DNS=$(dnsdomainname 2>/dev/null)
 	if [ "$DNS" ];
 	then
-		echo $yellowintensy"[x] Get DNS domain or the FQDN:"$white
-		echo "$DNS"
+		echo -e "$DNS\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'dnsdomainname' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check users and hosts communicating with the system"$white
+	echo $cyan"[+] - Check users and hosts communicating with the system:"$white
+	echo $yellowintensy"[x] Display all TCP/UDP connected socket, PID/program:"$white
 	NETSTAT=$(netstat -antup 2>/dev/null)
 	if [ "$NETSTAT" ];
 	then
-		echo $yellowintensy"[x] Display all TCP/UDP connected socket, PID/program:"$white
 		echo -e "$NETSTAT\n"
 	else
 		#alternative to netstat
 		SS=$(ss -tuln 2>/dev/null)
-		echo $yellowintensy"[x] Display all TCP/UDP connected socket, PID/program:"$white
 		echo -e "$SS\n"
 	fi
 
+	echo $yellowintensy"[x] List files based on their Internet address:"$white
 	LSOF=$(lsof -Pi 2>/dev/null)
 	if [ "$LSOF" ];
 	then
-		echo $yellowintensy"[x] List files based on their Internet address:"$white
 		echo -e "$LSOF\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'lsof' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Last logged in users:"$white
 	LAST=$(last 2>/dev/null)
 	if [ "$LAST" ];
 	then
-		echo $yellowintensy"[x] Last logged in users:"$white
 		echo -e "$LAST\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'last' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Who is logged on and what they are doing:"$white
 	W=$(w 2>/dev/null)
 	if [ "$W" ];
 	then
-		echo $yellowintensy"[x] Who is logged on and what they are doing:"$white
-		echo -e "$W"
+		echo -e "$W\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'w' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check cached IP and/or MAC addresses"$white
+	echo $cyan"[+] - Check cached IP and/or MAC addresses:"$white
+	echo $yellowintensy"[x] Display all hosts based on ARP:"$white
 	ARP=$(arp -a 2>/dev/null)
 	if [ "$ARP" ];
 	then
-		echo $yellowintensy"[x] Display all hosts based on ARP:"$white
 		echo -e "$ARP\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'arp' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Display IP routing table:"$white
 	ROUTE=$(route -nee 2>/dev/null)
 	if [ "$ROUTE" ];
 	then
-		echo $yellowintensy"[x] Display IP routing table:"$white
-		echo "$ROUTE" 
+		echo -e "$ROUTE\n" 
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'route' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 function ConfidentialInfoAndUser(){
 	echo $boldgrn"[-] CONFIDENTIAL INFO and USER"$white
-	echo $cyan"[+] - Check list of users and super users"$white
+	echo $cyan"[+] - Check list of users and super users:"$white
 	SUPERUSER1=$(awk -F: '($3 == "0") {print}' /etc/passwd 2>/dev/null)
 	SUPERUSER2=$(grep -v -E "^#" /etc/passwd 2>/dev/null | awk -F: '$3 ==0 { print $1}' 2>/dev/null)
 	if [ "$SUPERUSER1" ] || [ "$SUPERUSER2" ];
 	then
 		echo $yellowintensy"[x] Super user:"$white
-		echo "$SUPERUSER1"; echo -e "$SUPERUSER2\n"
+		echo "$SUPERUSER1"; echo "$SUPERUSER2"
+		echo ""
 	else
 		:
 	fi
 
-	HOMEUSERS=$(ls -ld /home/*)
+	echo $yellowintensy"[x] Useful home users:"$white
+	HOMEUSERS=$(ls -ld /home/* 2>/dev/null)
 	if [ "$HOMEUSERS" ];
 	then
-		echo $yellowintensy"[x] Useful home users:"$white
 		echo -e $redintensy"$HOMEUSERS\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] From /etc/passwd - /bin/bash /bin/sh /bin/dash:"$white
 	PASSWD=$(cat /etc/passwd | grep "/bin/bash\|/bin/sh\|/bin/dash" 2>/dev/null)
 	if [ "$PASSWD" ];
 	then
-		echo $yellowintensy"[x] Anything with /bin/bash /bin/sh /bin/dash:"$white
-		echo "$PASSWD"
+		echo -e "$PASSWD\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check /etc for config files (recursive 1 level)"$white
+	echo $cyan"[+] - Check /etc for config files (recursive 1 level):"$white
+	echo $yellowintensy"[x] All *.conf files in /etc (recursive 1 level):"$white
 	CHECKETC=$(find /etc/ -maxdepth 1 -name "*.conf" -type f -exec ls -la {} \; 2>/dev/null)
 	if [ "$CHECKETC" ];
 	then
-		echo $yellowintensy"[x] All *.conf files in /etc (recursive 1 level):"$white
 		echo -e "$CHECKETC\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'find' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Check to see if we can read master.passwd:"$white
 	MASTERPASS=$(cat /etc/master.passwd 2>/dev/null)
 	if [ "$MASTERPASS" ];
 	then
-		echo $yellowintensy"[x] Check to see if we can read master.passwd:"$white
 		echo $redintensy"[/] Readable - /etc/master.passwd"$white
 		echo -e "$MASTERPASS\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
 	fi
 
-	SUDOPASS=$(echo '' | sudo -S -l -k 2>/dev/null)
+	echo $yellowintensy"[x] Sudo permissions"$white
+	SUDOPASS=$(echo '' | sudo -S -l 2>/dev/null)
 	if [ "$SUDOPASS" ];
 	then
-		echo $yellowintensy"[x] Sudo permissions"$white
 		echo $redintensy"[/] We can run sudo without supplying a password:"$white
-		echo "$SUDOPASS"
+		echo -e "$SUDOPASS\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo)!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check sensitive files"$white
+	echo $cyan"[+] - Check sensitive files:"$white
+	echo $yellowintensy"[x] From /etc - /etc/passwd /etc/shadow /etc/group /etc/sudoers:"$white
 	WRPASS=$(ls -l /etc/passwd 2>/dev/null)
 	if [ -w /etc/passwd ];
 	then
@@ -742,19 +743,19 @@ function ConfidentialInfoAndUser(){
 
 	if [ -r /var/backups/passwd.bak ] || [ -r /var/backups/group.bak ] || [ -r /var/backups/shadow.bak ] || [ -r /var/backups/gshadow.bak ];
 	then
-		echo $cyan"[+] - Check backup files"$white
+		echo $cyan"[+] - Check backup files:"$white
 		BACKUPPASS=$(ls -l /var/backups/passwd.bak 2>/dev/null)
-		if [ "$BACKUPPASS" ];
+		if [ -r /var/backups/passwd.bak ];
 		then
-			echo "$BACKUPPASS"
+			echo $redintensy"$BACKUPPASS"$white
 		else
 			echo "$BACKUPPASS"
 		fi
 
 		BACKUPGROUP=$(ls -l /var/backups/group.bak 2>/dev/null)
-		if [ "$BACKUPGROUP"  ];
+		if [ -r /var/backups/group.bak  ];
 		then
-			echo "$BACKUPGROUP"
+			echo $redintensy"$BACKUPGROUP"$white
 		else
 			echo "$BACKUPGROUP"
 		fi
@@ -775,154 +776,163 @@ function ConfidentialInfoAndUser(){
 			echo "$BACKUPGSHADOW"
 		fi
 	else
-		:
+		echo $cyan"[+] - Check backup files - /var/backups/:"$white
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check if anything interesting in the mail directory"$white
-	MAILVAR=$(for x in "/var/mail"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] From / - any interesting folder/files:"$white
+	UNUSUALF=$(ls -la / | grep -v 'total ' 2>/dev/null)
+	if [ "$UNUSUALF" ];
+	then
+		echo -e "$UNUSUALF\n"$white
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
+
+	echo $cyan"[+] - Check if anything interesting in the mail directory:"$white
+	echo $yellowintensy"[x] Interesting mail in /var/mail:"$white
 	if [ -d /var/mail ];
 	then 
-		echo $yellowintensy"[x] Interesting mail in /var/mail:"$white
-		echo -e "$MAILVAR\n"
+		MAILVAR=$(for x in "/var/mail"; do ls -lh "$x"; done | grep -v "total " 2>/dev/null)
+		if [ "$MAILVAR" ];
+		then
+			echo -e "$MAILVAR\n"
+		else
+			echo -e "None -> Probably needs more privileges(sudo) or empty output!\n"
+		fi
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] Is /var/mail/root exist - you can try to read it:"$white
 	if [ -e /var/mail/root ];
 	then
-		echo $yellowintensy"[x] Seems /var/mail/root exist - you can try to read it:"$white
-		$redintensy ls -l /var/mail/root | grep -v "total" 2>/dev/null $white
+		$ROOTMAIL=$(ls -l /var/mail/root | grep -v "total " 2>/dev/null)
+		echo -e $redintensy"$ROOTMAIL"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check if anything interesting in the home/root directories"$white
-	ROOTDIR=$(for x in "/root/"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $cyan"[+] - Check if anything interesting in the home/root directories:"$white
+	echo $yellowintensy"[x] Check if /root is accessible:"$white
+	ROOTDIR=$(for x in "/root"; do ls -lh "$x"; done 2>/dev/null)
 	if [ "$ROOTDIR" ];
 	then
-		echo $yellowintensy"[x] Check if /root is accessible:"$white
 		echo $redintensy"[/] Root directory can be accessible"$white
 		echo -e "$ROOTDIR\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or empty output!\n"
 	fi
 
-	HOMEDIR=$(for x in "/home/"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] Interesting /home/* directory:"$white
+	HOMEDIR=$(for x in "/home"; do ls -lh "$x"; done 2>/dev/null)
 	if [ "$HOMEDIR" ];
 	then
-		echo $yellowintensy"[x] Interesting /home/* directory:"$white
 		echo -e $redintensy"$HOMEDIR\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or empty output!\n"
 	fi
 
-	HOMEHISTORY=$(for x in /home/*/.*_history; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] History files of /home/*/:"$white
+	HOMEHISTORY=$(for x in /home/*/.*_history; do ls -lh "$x"; done 2>/dev/null)
 	if [ "$HOMEHISTORY" ];
 	then
-		echo $yellowintensy"[x] History files of /home/*/:"$white
 		echo -e $redintensy"$HOMEHISTORY\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) the 'path' not found or empty output!\n"
 	fi
 
-	ROOTHISTORY=$(for x in /root/.*_history; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] History files of /root:"$white
+	ROOTHISTORY=$(for x in /root/.*_history; do ls -lh "$x"; done 2>/dev/null)
 	if [ "$ROOTHISTORY" ];
 	then
-		echo $yellowintensy"[x] History files of /root:"$white
-		echo $redintensy"$ROOTHISTORY"$white
+		echo -e $redintensy"$ROOTHISTORY\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check for plain text password"$white
+	echo $cyan"[+] - Check for plain text password:"$white
 	if [ -e ~/.bash_history ];
 	then
 		echo $yellowintensy"[x] ~/.bash_history - snippet below:"$white
-		head ~/.bash_history
-		echo ""
+		BASHHISTORY=$(head ~/.bash_history)
+		echo -e $redintensy"$BASHHISTORY\n"$white
 	else
-		echo $blu"~/.bash_history file doesn't exist"$white
+		echo -e $blu"~/.bash_history not found!\n"$white
 	fi
 
 	if [ -e ~/.nano_history ];
 	then
 		echo $yellowintensy"[x] ~/.nano_history - snippet below:"$white
-		head ~/.nano_history
-		echo ""
+		NANOHISTORT=$(head ~/.nano_history)
+		echo -e $redintensy"$NANOHISTORT"$white
 	else
-		echo $blu"~/.nano_history file doesn't exist:"$white
+		echo -e $blu"~/.nano_history not found!\n"$white
 	fi
 
 	if [ -e ~/.mysql_history ];
 	then
 		echo $yellowintensy"[x] ~/.mysql_history - snippet below:"$white
-		head ~/.mysql_history
-		echo ""
+		MYSQLHISTORY=$(head ~/.mysql_history)
+		echo -e $redintensy"$MYSQLHISTORY"$white
 	else
-		echo $blu"~/.mysql_history file doesn't exist"$white
+		echo -e $blu"~/.mysql_history not found!\n"$white
 	fi
 
 	if [ -e ~/.php_history ];
 	then
 		echo $yellowintensy"[x] ~/.php_history - snippet below:"$white
-		head ~/.php_history
-		echo ""
+		PHPHISTORY=$(head ~/.php_history)
+		echo -e $redintensy"$PHPHISTORY"$white
 	else
-		echo $blu"~/.php_history file doesn't exist"$white
-		echo ""
+		echo -e $blu"~/.php_history not found!\n"$white
 	fi
 
-	echo $cyan"[+] - Check SSH Dir/Files"$white
+	echo $cyan"[+] - Check SSH Dir/Files:"$white
 	echo $yellowintensy"[x] Any private-key info - /home/*/.ssh/:"$white
 	for usersshfolder in /home/*/.ssh
 	do
-	        ls -ld "$usersshfolder"
-	        for files in $usersshfolder
-	        do
-        	        if [ -r "$files" ];
-        	        then
-                                sshfile=$(ls -l "$files" | grep -v "total" 2>/dev/null)
-                                echo $redintensy"$sshfile [READABLE]"$white
-        	        else
-                                :
-        	        fi
-        	        echo ""
-                done
+		ls -ld "$usersshfolder"
+		for files in $usersshfolder
+		do
+        	if [ -r "$files" ];
+        	then
+        		sshfile=$(ls -l "$files" | grep -v "total " 2>/dev/null)
+        		echo -e $redintensy"$sshfile READABLE\n"$white
+        	else
+        		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+        	fi
         done
-        echo ""
+    done
         
 	if [ -d /root/.ssh ];
 	then
-	        echo $yellowintensy"[x] Any private-key info - /root/.ssh/:"$white
-	        ls -ld /root/.ssh/
-	        for rootsshfiles in "/root/.ssh"
-	        do
-		        if [ -r "$rootsshfiles" ];
-		        then
-			        rootsshfile=$(ls -l "$files" | grep -v "total" 2>/dev/null)
-			        echo $redintensy"$rootsshfile [READABLE]"$white
-	        	else
-					echo $yellowintensy"[x] Any private-key info - /root/.ssh/"$white
-					LISTSSHROOT=$(ls -ld /root/.ssh/)
-					echo "$LISTSSHROOT"
-	   	     	fi
-	        done
+	    echo $yellowintensy"[x] Any private-key info - /root/.ssh/:"$white
+	    ls -ld /root/.ssh/
+	    for rootsshfiles in "/root/.ssh"
+	    do
+		    if [ -r "$rootsshfiles" ];
+		    then
+			    rootsshfile=$(ls -l "$files" | grep -v "total " 2>/dev/null)
+			    echo -e $redintensy"$rootsshfile [READABLE]\n"$white
+	        else
+				LISTSSHROOT=$(ls -ld /root/.ssh/)
+				echo -e "$LISTSSHROOT\n"
+	   	     fi
+	    done
 	else
-		:
+		echo $yellowintensy"[x] Any private-key info - /root/.ssh/:"$white
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	ROOTLOGIN=$(grep "PermitRootLogin" /etc/ssh/sshd_config 2>/dev/null | grep -v "#" | awk '{print $2}')
+	echo $yellowintensy"[x] Check if PermitRootLogin is on:"$white
+	ROOTLOGIN=$(grep "PermitRootLogin" /etc/ssh/sshd_config | grep -v "#" | awk '{print $2}')
 	if [ "$ROOTLOGIN" ];
 	then
-		echo $yellowintensy"Check if PermitRootLogin is on:"$white
 		echo $redintensy"[/] Root is allowed to login via SSH"$white
 		echo -e "$ROOTLOGIN\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 	
 	PGPKEY=$(ls -l /home/*/.gnupg/secring.gpgs 2>/dev/null)
@@ -930,171 +940,166 @@ function ConfidentialInfoAndUser(){
 	Kerberos2=$(ls -l /tmp/krb5cc_* 2>/dev/null)
 	if [ "$PGPKEY" ] || [ "$Kerberos1" ] || [ "$Kerberos2" ];
 	then
-                echo $cyan"[+] - Check PGP keys and Kerberos tickets"$white
+                echo $cyan"[+] - Check PGP keys and Kerberos tickets:"$white
                 if [ "$PGPKEY" ];
                 then
 		        echo $yellowintensy"[x] PGP keys:"$white
 		        echo -e $redintensy"$PGPKEY\n"$white
                 else
-                        :
+                	echo $yellowintensy"[x] PGP keys:"$white
+                    echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
                 fi
 
                 if [ "$Kerberos1" ] || [ "$Kerberos2" ];
                 then
-                	echo $yellowintensy"[x] Kerberos tickets:"$white
-                        if [ "$Kerberos1" ];
-	        	then
-		        	echo $redintensy"$Kerberos1"$white
-	        	else
-		        	:
-	        	fi
-
+                    if [ "$Kerberos1" ];
+	        		then
+	        			echo $yellowintensy"[x] Kerberos tickets - krb5.keytab:"$white
+		        		echo -e $redintensy"$Kerberos1\n"$white
+	        		else
+	        			echo $yellowintensy"[x] Kerberos tickets - krb5.keytab:"$white
+		        		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
+	        		fi
 		        if [ "$Kerberos2" ];
 	        	then
-		        	echo $redintensy"$Kerberos2"$white
+	        		echo $yellowintensy"[x] Kerberos tickets - krb5cc_*:"$white
+		        	echo -e $redintensy"$Kerberos2\n"$white
 	        	else
-	        		:
+	        		echo $yellowintensy"[x] Kerberos tickets - krb5cc_*:"$white
+	        		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
 	        	fi
 	        fi
 	else
-		:
+		echo $cyan"[+] - Check PGP keys and Kerberos tickets:"$white
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check password policy information and Umask value"$white
+	echo $cyan"[+] - Check password policy information and Umask value:"$white
+	echo $yellowintensy"[x] Password Policy:"$white
 	LOGINDEFS=$(grep "^PASS_MAX_DAYS\|^PASS_MIN_DAYS\|^PASS_WARN_AGE\|^ENCRYPT_METHOD" /etc/login.defs 2>/dev/null)
 	if [ "$LOGINDEFS" ];
 	then
-		echo $yellowintensy"[x] Password Policy:"$white
 		echo -e "$LOGINDEFS\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found!\n"
 	fi
 
 	UMASKVALUE=$(umask 2>/dev/null & umask -S 2>/dev/null)
 	if [ "$UMASKVALUE" ];
 	then
  		echo $yellowintensy"[x] Current umask value:"$white
- 		echo "$UMASKVALUE"
+ 		echo -e "$UMASKVALUE\n"
   	else
-  		:
+  		echo -e "None -> Probably needs more privileges(sudo) or the command 'umask' not found!\n"
 	fi
-	echo ""
 
+	echo $cyan"[+] - Accessible .rhosts files"$white
+	echo $yellowintensy"[x] Rhost config file(s):"$white
 	RHOSTUSR=$(find /home -iname "*.rhosts" -exec ls -la {} \; 2>/dev/null)
 	if [ "$RHOSTUSR" ];
 	then
-		echo "[+] - Accessible .rhosts files"
-		echo $yellowintensy"[x] Rhost config file(s):"$white 
-		echo $redintensy"$RHOSTUSR"$white
+		echo -e $redintensy"$RHOSTUSR\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 function FileSystem(){
 	echo $boldgrn"[-] FILE SYSTEM"$white
-	echo $cyan"[+] - Check if anything interesting in the www directory"$white
+	echo $cyan"[+] - Check if anything interesting in the www directory:"$white
+	echo $yellowintensy"[x] Any interesting file/folder in /var:"$white
 	VAR=$(for x in "/var"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
 	if [ "$VAR" ];
 	then
-		echo $yellowintensy"[x] Any interesting file/folder in /var:"$white
 		echo -e "$VAR\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
-	WWW=$(for x in "/var/www"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] Any interesting file/folder in /var/www:"$white
+	WWW=$(for x in "/var/www"; do ls -lh "$x"; done 2>/dev/null)
 	if [ -d /var/www ];
 	then
-		echo $yellowintensy"[x] Any interesting file/folder in /var/www:"$white
-		echo -e "$WWW\n" 
+		echo -e "$WWW\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
-	HTML=$(for x in "/var/www/html"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
+	echo $yellowintensy"[x] Any interesting file/folder in /var/www/html:"$white
+	HTML=$(for x in "/var/www/html"; do ls -lh "$x"; done 2>/dev/null)
 	if [ -d /var/www/html ];
 	then
-		echo $yellowintensy"[x] Any interesting file/folder in /var/www/html:"$white
-		echo "$HTML"
+		echo -e "$HTML\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
+	echo $yellowintensy"[x] Search on config.* and db.* files on /var:"$white
 	CONFIGDB=$(find /var/ -iname "config.*" -type f -exec ls -l {} \; 2>/dev/null && find /var/ -iname "db.*" -type f -exec ls -l {} \; 2>/dev/null)
 	if [ "$CONFIGDB" ];
 	then
-		echo $yellowintensy"[x] Search on config.* and db.* files on /var:"$white
-		echo "$CONFIGDB"
+		echo -e "$CONFIGDB\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Search for hidden files"$white
+	echo $cyan"[+] - Search for hidden files:"$white
+	echo $yellowintensy"[x] Hidden files:"$white
  	HIDDENFILES=$(find / -name ".*" -type f ! -path "/proc/*" ! -path "/sys/*" -exec ls -al {} \; 2>/dev/null)
  	if [ "$HIDDENFILES" ];
  	then
- 		echo $yellowintensy"[x] Hidden files:"$white
- 		echo "$HIDDENFILES"
+ 		echo -e "$HIDDENFILES\n"
  	else
- 		:
+ 		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
+	echo $cyan"[+] - Check for clear-text password on /home/*:"$white
+	echo $yellowintensy"[x] Clear text password:"$white
 	PASSWORDFILES=$(find /home -name "pass*" -type f -exec ls -l {} \; 2>/dev/null)
 	if [ "$PASSWORDFILES" ];
 	then
-		echo $cyan"[+] - Check for clear-text password on /home/*"$white
-		echo $yellowintensy"[x] Clear text password:"$white
-		echo $redintensy"$PASSWORDFILES"$white
+		echo -e $redintensy"$PASSWORDFILES\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
+	echo $cyan"[+] - Under / the most interesting ssh files:"$white
+	echo $yellowintensy"[x] SSH files:"$white
 	SYSTEMSSHCHECK=$(find / \( -name "id_dsa*" -o -name "id_rsa*" -o -name "known_hosts" -o -name "authorized_hosts" -o -name "authorized_keys" \) -exec ls -la {} \; 2>/dev/null)
 	if [ "$SYSTEMSSHCHECK" ];
 	then
-		echo $cyan"[+] - The most interesting ssh files /"$white
-		echo $yellowintensy"[x] SSH files:"$white
-		echo $redintensy"$SYSTEMSSHCHECK"$white
+		echo -e $redintensy"$SYSTEMSSHCHECK\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check sticky bits, SUID and SGID"$white
+	echo $cyan"[+] - Check sticky bits, SUID and SGID:"$white
+	echo $yellowintensy"[x] SUID - 4000:"$white
 	SUID=$(find / -perm -u=s -type f -exec ls -l {} \; 2>/dev/null)
 	if [ "$SUID" ];
 	then
-		echo $yellowintensy"[x] SUID - 4000:"$white
 		echo -e "$SUID\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] SGID - 2000:"$white
 	SGID=$(find / -perm -g=s -type f -exec ls -l {} \; 2>/dev/null)
 	if [ "$SGID" ];
 	then
-		echo $yellowintensy"[x] SGID - 2000:"$white
 		echo -e "$SGID\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] Sticky bit for folders - 1000:"$white
 	STICKY=$(find / -perm -1000 -type d -exec ls -ld {} \; 2>/dev/null)
 	if [ "$STICKY" ];
 	then
-		echo $yellowintensy"[x] Sticky bit for folders - 1000:"$white
-		echo -e "$STICKY"
+		echo -e "$STICKY\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'directories' not found!\n"
 	fi
-	echo ""
 
 	CATCHECK=$(command -v cat 2>/dev/null)
 	TAILCHECK=$(command -v tail 2>/dev/null)
@@ -1105,7 +1110,7 @@ function FileSystem(){
 
 	if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$LESSCHECK" ] || [ -u "$VIMBASICCHECK" ];
 	then
-		echo $cyan"[+] - Using SUIDs to read/write root files"$white
+		echo $cyan"[+] - Using SUIDs to read/write root files:"$white
 		if [ -u "$CATCHECK" ];
 		then
 			ACATCHECK=$(ls -l "$CATCHECK" 2>/dev/null)
@@ -1158,61 +1163,58 @@ function FileSystem(){
 	fi
 	echo ""
 
-	echo $cyan"[+] - Check for written and executable places"$white
+	echo $cyan"[+] - Check for written and executable places:"$white
+	echo $yellowintensy"[x] World-writable folders - 222:"$white
 	WRITABLE=$(find / -perm -222 -type d -exec ls -ld {} \; 2>/dev/null)
 	if [ "$WRITABLE" ];
 	then
-		echo $yellowintensy"[x] World-writable folders - 222:"$white
 		echo -e "$WRITABLE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'directories' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] World-executable folders:"$white
 	EXECUTABLE=$(find / -perm -o x -type d -exec ls -ld {} \; 2>/dev/null)
 	if [ "$EXECUTABLE" ];
 	then
-		echo $yellowintensy"[x] World-executable folders:"$white
 		echo -e "$EXECUTABLE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'directories' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] World-writable files - 0002:"$white
 	FILEWRITABLE=$(find / -path /proc -prune -o -perm -0002 ! -type l -ls 2>/dev/null)
 	if [ "$FILEWRITABLE" ];
 	then
-		echo $yellowintensy"[x] World-writable files - 0002:"$white
-		echo "$FILEWRITABLE"
+		echo -e "$FILEWRITABLE\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - Check for readable logfiles owned by root"$white	
+	echo $cyan"[+] - Check for readable logfiles owned by root:"$white
+	echo $yellowintensy"[x] World-readable logfiles - 0004:"$white
 	LOGFILES=$(find /var/log -type f -perm -0004 -user root -exec ls -l {} \; 2>/dev/null)
 	if [ "$LOGFILES" ];
 	then
-		echo $yellowintensy"[x] World-readable logfiles - 0004:"$white
-		echo $redintensy"$LOGFILES"$white
+		echo -e $redintensy"$LOGFILES\n"$white
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
-	echo ""
 
+	echo $cyan"[+] - List NFS shares and permisisons:"$white
+	echo $yellowintensy"[x] NFS shares:"$white
 	NSFEXPORTS=$(ls -la /etc/exports 2>/dev/null)
 	if [ "$NSFEXPORTS" ];
 	then
-		echo $cyan"[+] - List NFS shares and permisisons"$white
-  		echo $yellowintensy"[x] NFS:"$white
   		echo $redintensy"$NSFEXPORTS"$white
   	else
-  		:
+  		echo -e "None -> Probably needs more privileges(sudo) or the 'path' not found\n"
 	fi
-	echo ""
 }
 
 function DevToolsAndLang(){
 	echo $boldgrn"[-] DEVELOPMENT TOOLS and LANGUAGES"$white
-	echo $cyan"[+] - Check for development tools and languages are installed/supported"$white
+	echo $cyan"[+] - Check for development tools and languages are installed/supported:"$white
 	PYTHON=$(command -v python 2>/dev/null)
 	if [ "$PYTHON" ];
 	then
@@ -1270,7 +1272,7 @@ function DevToolsAndLang(){
 	fi
 	echo ""
 
-	echo $cyan"[+] - Check for how files can be uploaded"$white
+	echo $cyan"[+] - Check for how files can be uploaded:"$white
 	FTP=$(command -v ftp 2>/dev/null)
 	if [ "$FTP" ];
 	then
@@ -1318,9 +1320,25 @@ function DevToolsAndLang(){
 	else
 		:
 	fi
+
+	W3M=$(command -v w3m 2>/dev/null)
+	if [ "$W3M" ];
+	then
+		echo "$W3M"
+	else
+		:
+	fi
+
+	ELINKS=$(command -v elinks 2>/dev/null)
+	if [ "$ELINKS" ];
+	then
+		echo "$ELINKS"
+	else
+		:
+	fi
 	echo ""
 
-	echo $cyan"[+] - Shell escape"$white
+	echo $cyan"[+] - Shell escape:"$white
 	echo "awk    =	awk 'BEGIN {system(\"/bin/sh\")}'"
 	echo "perl   =	perl -e 'exec \"/bin/sh\";'"
 	echo "python = 	python -c 'import pty;pty.spawn(\"/bin/sh\")'"
@@ -1335,232 +1353,224 @@ function DevToolsAndLang(){
 	echo "find   =	find / -exec sh -i \;"
 	echo "vi     =	:!sh or :shell or -c '!sh'"
 	echo "vim    =	:!sh or :shell or -c '!sh'"
-	echo "gdb	 =	shell"
+	echo "gdb    =	shell"
+	echo "pinfo  =	! -> less -> !sh"
+	echo "mutt   =	! -> sh"
+	echo "expect =	expect or expect -> sh"
+	echo ""
+	echo $redintensy" ** Please note that we can replace 'sh' with 'bash'**"$white
 	echo ""
 
-	echo $cyan"[+] - List all Environment Variables"$white
+	echo $cyan"[+] - List all Environment Variables:"$white
 	PRINTENV=$(printenv 2>/dev/null)
 	if [ "$PRINTENV" ];
 	then
-		echo "$PRINTENV"
+		echo -e "$PRINTENV\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'printenv' not found or empty output!\n"
 	fi
-	echo ""
 
-	echo $cyan"[+] - List all available shells"$white
+	echo $cyan"[+] - List all available shells:"$white
 	SHELLS=$(cat /etc/shells 2>/dev/null)
 	if [ "$SHELLS" ];
 	then
-		echo "$SHELLS"
+		echo -e "$SHELLS\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 
 function SoftwareVersion(){
 	echo $boldgrn"[-] SOFTWARES VERSION"$white
-	echo $cyan"[+] - Check apps and services version"$white
-	SUDOVER=$(command -v sudo)
+	echo $cyan"[+] - Check apps and services version:"$white
+	SUDOVER=$(sudo -V | grep -i "version" | grep "Sudo " 2>/dev/null)
 	if [ "$SUDOVER" ];
 	then
 		echo $yellowintensy"[x] Sudo version (<= 1.8.20):"$white
-		sudo -V | grep -i "version" | grep "Sudo " 2>/dev/null
+		echo -e "$SUDOVER\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'sudo' not found or empty output!\n"
 	fi
-	echo ""
 
-	MYSQLVER=$(command -v mysql)
+	echo $yellowintensy"[x] MYSQL version:"$white
+	MYSQLVER=$(mysql -V 2>/dev/null)
 	if [ "$MYSQLVER" ];
 	then
-		echo $yellowintensy"[x] MYSQL version:"$white
-		mysql -V 2>/dev/null
+		echo -e "$MYSQLVER\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'mysql' not found or empty output!\n"	
 	fi
-	echo ""
 
-	PSQL=$(command -v psql)
+	echo $yellowintensy"[x] PostgreSQL version:"$white
+	PSQL=$(psql -V 2>/dev/null)
 	if [ "$PSQL" ];
 	then
-		echo $yellowintensy"[x] PostgreSQL version:"$white
-		psql -V 2>/dev/null
+		echo -e "$PSQL\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'psql' not found or empty output!\n"
 	fi
-	echo ""
 
-	APACHEVER=$(command -v apache2)
+	echo $yellowintensy"[x] Apache version:"$white
+	APACHEVER=$(apache2 -v 2>/dev/null)
 	if [ "$APACHEVER" ];
 	then
-		echo $yellowintensy"[x] Apache version:"$white
-		apache2 -v 2>/dev/null
+		echo -e "$APACHEVER\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'apache2' not found or empty output!\n"
 	fi
-	echo ""
 
-	APACHEUSER=$(command -v apache2)
+	echo $yellowintensy"[x] Account running under apache service:"$white
+	APACHEUSER=$(grep -i 'user\|group' /etc/apache2/envvars 2>/dev/null | awk '{sub(/.*\export /,"")}1' 2>/dev/null)
 	if [ "$APACHEUSER" ];
 	then
-		echo $yellowintensy"[x] Account running under apache service:"$white
-		grep -i 'user\|group' /etc/apache2/envvars 2>/dev/null | awk '{sub(/.*\export /,"")}1'
+		echo -e "$APACHEUSER\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 
-	CHKROOTKIT=$(command -v chkrootkit 2>/dev/null)
+	echo $yellowintensy"[x] Chkrootkit version (< 0.50):"$white
+	CHKROOTKIT=$(chkrootkit -V 2>/dev/null)
 	if [ "$CHKROOTKIT" ];
 	then
-		echo $yellowintensy"[x] Chkrootkit version (< 0.50):"$white
-		chkrootkit -V
+		echo -e "$CHKROOTKIT\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'chkrootkit' not found or empty output!\n"
 	fi
-	echo ""
 
-	PKEXEC=$(command -v pkexec 2>/dev/null)
+	echo $yellowintensy"[x] Pkexec version:"$white
+	PKEXEC=$(pkexec --version 2>/dev/null)
 	if [ "$PKEXEC" ];
 	then
-		echo $yellowintensy"[x] Pkexec version:"$white
-		pkexec --version
+		echo -e "$PKEXEC\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'pkexec' not found or empty output!\n"
 	fi
-	echo""
 
-	JAVA=$(command -v java 2>/dev/null)
+	echo $yellowintensy"[x] Java version:"$white
+	JAVA=$(java -version 2>/dev/null)
 	if [ "$JAVA" ];
 	then
-		echo $yellowintensy"[x] Java version:"$white
-		java -version
+		echo -e "$JAVA\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'java' not found or empty output!\n"
 	fi
-	echo ""
 
+	echo $yellowintensy"[x] Exim version (<= 4.91):"$white
 	EXIM=$(exim -bV 2>/dev/null)
 	if [ "$EXIM" ];
 	then
-		echo $yellowintensy"[x] Exim version (<= 4.91):"$white
-		echo "$EXIM"
+		echo -e "$EXIM\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'exim' not found or empty output!\n"
 	fi
-	echo ""
 
+	echo $yellowintensy"[x] Udev version (< 232):"$white
 	UDEV=$(udevadm --version 2>/dev/null)
 	if [ "$UDEV" ];
 	then
-		echo $yellowintensy"[x] Udev version (< 232):"$white
-		echo "Udev version: $UDEV"
+		echo -e "Udev version: $UDEV\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the command 'udevadm' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 function TryingAccess(){
 	echo $boldgrn"[-] TRYING ACCESS"$white
-	echo $cyan"[+] - Check for some methods for extract creds and get access as root"$white
+	echo $cyan"[+] - Extract creds and get database access as root:"$white
+	echo $yellowintensy"[x] Connect to MYSQL with root/root creds:"$white
 	MYSQLCONNECT=$(mysqladmin -uroot -proot version 2>/dev/null)
 	if [ "$MYSQLCONNECT" ];
 	then
-		echo $yellowintensy"[x] Connect to MYSQL with root/root creds:"$white
 		echo $redintensy"[/] We can connect to the local MYSQL service with default root/root credentials!"$white
 		echo -e "$MYSQLCONNECT\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'mysqladmin' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Connect to MYSQL as root and non-pass:"$white
 	MYSQLCONNECTNOPASS=$(mysqladmin -uroot version 2>/dev/null)
 	if [ "$MYSQLCONNECTNOPASS" ];
 	then
-		echo $yellowintensy"[x] Connect to MYSQL as root and non-pass:"$white
 	  	echo $redintensy"[/] We can connect to the local MYSQL service as 'root' and without a password!"$white
 	  	echo -e "$MYSQLCONNECTNOPASS\n" 
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'mysqladmin' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Connect to Postgres DB 'template0' as user 'postgres' and non-pass:"$white
 	POSTCON1=$(psql -U postgres template0 -c 'select version()' 2>/dev/null | grep version)
 	if [ "$POSTCON1" ];
 	then
-		echo $yellowintensy"[x] Connect to Postgres DB 'template0' as user postgres and non-pass:"$white
-		 echo $redintensy"[/] We can connect to Postgres DB 'template0' as user 'postgres' with no password!"$white
-		 echo -e "$POSTCON1\n"
+		echo $redintensy"[/] We can connect to Postgres DB 'template0' as user 'postgres' with no password!"$white
+		echo -e "$POSTCON1\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'psql' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Connect to Postgres DB 'template1' as user 'postgres' and non-pass:"$white
 	POSTCON11=$(psql -U postgres template1 -c 'select version()' 2>/dev/null | grep version)
 	if [ "$POSTCON11" ];
 	then
-		echo $yellowintensy"[x] Connect to Postgres DB 'template1' as user postgres and non-pass:"$white
 		echo $redintensy"[/] We can connect to Postgres DB 'template1' as user 'postgres' with no password!"$white
 		echo -e "$POSTCON11\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'psql' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Connect to Postgres DB 'template0' as user 'psql' and non-pass:"$white
 	POSTCON2=$(psql -U pgsql template0 -c 'select version()' 2>/dev/null | grep version)
 	if [ "$POSTCON2" ];
 	then
-		echo $yellowintensy"[x] Connect to Postgres DB 'template0' as user psql and non-pass:"$white
 		echo $redintensy"[/] We can connect to Postgres DB 'template0' as user 'psql' with no password!"$white
 		echo -e "$POSTCON2\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'psql' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Connect to Postgres DB 'template1' as user 'psql' and non-pass:"$white
 	POSTCON22=$(psql -U pgsql template1 -c 'select version()' 2>/dev/null | grep version)
 	if [ "$POSTCON22" ];
 	then
-		echo $yellowintensy"[x] Connect to Postgres DB 'template1' as user psql and non-pass:"$white
 		echo $redintensy"[/] We can connect to Postgres DB 'template1' as user 'psql' with no password!"$white
 		post -e "$POSTCON22\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the command 'psql' not found or wrong creds!\n"
 	fi
 
+	echo $yellowintensy"[x] Any creds in /etc/fstab:"$white
 	FSTAB=$(grep username /etc/fstab 2>/dev/null |awk '{sub(/.*\username=/,"");sub(/\,.*/,"")}1' 2>/dev/null| xargs -r echo username: 2>/dev/null; grep password /etc/fstab 2>/dev/null |awk '{sub(/.*\password=/,"");sub(/\,.*/,"")}1' 2>/dev/null| xargs -r echo password: 2>/dev/null; grep domain /etc/fstab 2>/dev/null |awk '{sub(/.*\domain=/,"");sub(/\,.*/,"")}1' 2>/dev/null| xargs -r echo domain: 2>/dev/null)
 	if [ "$FSTAB" ];
 	then
-		echo $yellowintensy"[x] Any creds in /etc/fstab:"$white
 		echo $redintensy"[/] Looks like there are credentials in /etc/fstab!"$white
 		echo -e "$FSTAB\n"
 	else 
-	  	:
+	  	echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Any creds file in /etc/fstab:"$white
 	FSTABCRED=$(grep cred /etc/fstab 2>/dev/null |awk '{sub(/.*\credentials=/,"");sub(/\,.*/,"")}1' 2>/dev/null | xargs -I{} sh -c 'ls -la {}; cat {}' 2>/dev/null)
 	if [ "$FSTABCRED" ];
 	then
-		echo $yellowintensy"[x] Any creds file in /etc/fstab:"$white
 		echo $redintensy"[/] /etc/fstab contains a credentials file!"$white
-		echo "$FSTABCRED"
+		echo -e "$FSTABCRED\n"
 	else
-		:
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
-	echo ""
 }
 
 function Usage(){
 	echo $boldgrn" Usage   > ./postenum.sh <option>"$white
 	echo " Options >"
-	echo "	-a :	All"
+	echo "	-a :	All (not recommended)"
 	echo "	-s :	Filesystem [SUID, SGID, Config/DB files, etc.]"
-	echo "	-l :	Shell escape and development tools"
-	echo "	-c :	The most interesting files"
-	echo "	-n :	Network settings"
+	echo "	-l :	Shell escape, environment variables and development tools"
+	echo "	-c :	Interesting [Backup files, PasswordPolicy, SSH files, etc.]"
+	echo "	-n :	Network settings [DNS, ARP, Host, TCP, UDP, etc.]"
 	echo "	-p :	Services and cron jobs"
-	echo "	-o :	OS informations and priv esc exploits"
+	echo "	-o :	OS informations and priv esc kernel exploits"
 	echo "	-v :	Sofware's versions"
-	echo "	-t :	Fstab credentials and databases checker"
+	echo "	-t :	Fstab credentials and database access"
 	echo ""
 }
 
