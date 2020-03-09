@@ -1,5 +1,5 @@
 # Postenum 0.9
-Postenum is a clean, nice and easy tool for basic/advanced privilege escalation vectors/techniques. Postenum tool is intended to be executed locally on a Linux box.
+Postenum is a linux privilege escalation tool.
 
 Be more than a normal user. be the ROOT.
 
@@ -40,3 +40,6 @@ If this project help you reduce time to develop, you can give me a cup of coffee
 # Demo:
 ![PostenumDemo](https://github.com/mbahadou/postenum/raw/master/demo.gif)
 
+# Contributing:
+
+You can contribute by fixing bugs or contributing to the code. If you cannot code, please use the tool and provide feedback and bugs!
