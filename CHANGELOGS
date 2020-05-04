@@ -1,6 +1,14 @@
-Version 0.9
+Version 1.0
 
 License: MIT
+
+Version 1.0
+  - New shell escaping (docker, ftp, irb)..
+  - Dump cleartext Pre-Shared Wireless Keys
+  - Extract the string 'pass' and 'user' apache from access.log
+  - Checking the conf files for the string 'pass'
+  - World-writeable root jobs/tasks
+  - Next
 
 Version 0.9
   - Permission denied msg fixed
