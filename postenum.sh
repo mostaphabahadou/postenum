@@ -3,15 +3,22 @@ clear
 
 # License: MIT
 
-# Version 0.9
+# Version 1.0
 
-# Postenum is a clean, nice and easy tool for basic/advanced privilege escalation techniques. Postenum tool is intended to be executed locally on a Linux box.
-# A tool to increase the chance of success (Be Root User), using different old/new tricks, techniques, approaches, and exploits, in the world of hacking/pentration testing.
-# Be more than a normal user. be the ROOT.
+# Linux privilege escalation tool.
+# Be more than a normal user. Be the ROOT.
 
 # For help or reporting issues, create pull requests, visit https://github.com/mbahadou/postenum
 
 # CHANGELOGS
+# Version 1.0
+# - New shell escaping (docker, ftp, irb)..
+# - Dump cleartext Pre-Shared Wireless Keys
+# - Extract the string 'pass' and 'user' apache from access.log
+# - Checking the conf files for the string 'pass'
+# - World-writeable root jobs/tasks
+# - Next
+
 # Version 0.9
 # - Permission denied msg fixed
 # - Backup msg for non executed commands 
@@ -95,7 +102,7 @@ echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 0.9
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 1.0
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
@@ -168,6 +175,7 @@ function Exploits4x(){
 
 function Exploits5x(){
 	echo "$redintensy Linux Kernel 4.10 < 5.1.17$white - https://www.exploit-db.com/exploits/47163"
+	echo "$redintensy Linux 5.3$white - https://www.exploit-db.com/exploits/47779"
 }
 
 function OperatingSystem(){
@@ -403,6 +411,16 @@ function AppsAndServices(){
 		echo -e "None -> Probably needs more privileges(sudo), the '*cron* path' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Custom jobs or tasks configured as root and are world-writeable:"$white
+	CRONWRASROOT=$(find /etc/cron* -type f -perm -o+w -exec ls -l {} \; 2>/dev/null)
+	if [ "$CRONWRASROOT" ];
+	then
+		
+		echo -e $redintensy"$CRONWRASROOT\n"$white
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
+
 	echo $yellowintensy"[x] List /etc/cron.d/:"$white
 	CROND=$(for x in "/etc/cron.d/"; do ls -l "$x"; done | grep -v "total " 2>/dev/null)
 	if [ "$CROND"  ];
@@ -458,6 +476,15 @@ function AppsAndServices(){
 	if [ "$CRONDWEEKLY" ];
 	then
 		echo -e "$CRONDWEEKLY\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi 
+
+	echo $yellowintensy"[x] Find world-writeable cron jobs:"$white
+	WRITEABLECRONJOB=$(find /etc/cron* -type f -perm -o+w -exec ls -l {} \;)
+	if [ "$WRITEABLECRONJOB" ];
+	then
+		echo -e "$WRITEABLECRONJOB\n"
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi 
@@ -606,8 +633,8 @@ function CommAndNet(){
 		echo -e "None -> Probably needs more privileges(sudo), the command 'lsof' not found or empty output!\n"
 	fi
 
-	echo $yellowintensy"[x] Last logged in users:"$white
-	LAST=$(last 2>/dev/null)
+	echo $yellowintensy"[x] Last logged on users:"$white
+	LAST=$(last -a 2>/dev/null)
 	if [ "$LAST" ];
 	then
 		echo -e "$LAST\n"
@@ -615,7 +642,16 @@ function CommAndNet(){
 		echo -e "None -> Probably needs more privileges(sudo), the command 'last' not found or empty output!\n"
 	fi
 
-	echo $yellowintensy"[x] Who is logged on and what they are doing:"$white
+	echo $yellowintensy"[x] Most Recent Logins:"$white
+	LASTLOG=$(lastlog 2>/dev/null)
+	if [ "$LASTLOG" ];
+	then
+		echo -e "$LASTLOG\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the command 'lastlog' not found or empty output!\n"
+	fi
+
+	echo $yellowintensy"[x] Who is currently logged onto the system:"$white
 	W=$(w 2>/dev/null)
 	if [ "$W" ];
 	then
@@ -834,7 +870,7 @@ function ConfidentialInfoAndUser(){
 	fi
 
 	echo $yellowintensy"[x] History files of /home/*/:"$white
-	HOMEHISTORY=$(for x in /home/*/.*_history; do ls -lh "$x"; done 2>/dev/null)
+	HOMEHISTORY=$(find /home/* -name *.*history* -print 2> /dev/null)
 	if [ "$HOMEHISTORY" ];
 	then
 		echo -e $redintensy"$HOMEHISTORY\n"$white
@@ -865,27 +901,27 @@ function ConfidentialInfoAndUser(){
 	then
 		echo $yellowintensy"[x] ~/.nano_history - snippet below:"$white
 		NANOHISTORT=$(head ~/.nano_history)
-		echo -e $redintensy"$NANOHISTORT"$white
+		echo -e $redintensy"$NANOHISTORT\n"$white
 	else
-		echo -e $blu"~/.nano_history not found!\n"$white
+		:
 	fi
 
 	if [ -e ~/.mysql_history ];
 	then
 		echo $yellowintensy"[x] ~/.mysql_history - snippet below:"$white
 		MYSQLHISTORY=$(head ~/.mysql_history)
-		echo -e $redintensy"$MYSQLHISTORY"$white
+		echo -e $redintensy"$MYSQLHISTORY\n"$white
 	else
-		echo -e $blu"~/.mysql_history not found!\n"$white
+		:
 	fi
 
 	if [ -e ~/.php_history ];
 	then
 		echo $yellowintensy"[x] ~/.php_history - snippet below:"$white
 		PHPHISTORY=$(head ~/.php_history)
-		echo -e $redintensy"$PHPHISTORY"$white
+		echo -e $redintensy"$PHPHISTORY\n"$white
 	else
-		echo -e $blu"~/.php_history not found!\n"$white
+		:
 	fi
 
 	echo $cyan"[+] - Check SSH Dir/Files:"$white
@@ -1002,6 +1038,16 @@ function ConfidentialInfoAndUser(){
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
+
+	echo $cyan"[+] - Wireless Networks"$white
+	echo $yellowintensy"[x] Cleartext Pre-Shared Wireless Keys from Network Manager:"$white
+	WIRELESSKEY=$(grep -E "^id|^psk" /etc/NetworkManager/system-connections/* 2>/dev/null)
+	if [ "$WIRELESSKEY" ];
+	then
+		echo -e $redintensy"$WIRELESSKEY\n"$white
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
 }
 
 function FileSystem(){
@@ -1039,6 +1085,15 @@ function FileSystem(){
 	if [ "$CONFIGDB" ];
 	then
 		echo -e "$CONFIGDB\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
+	fi
+
+	echo $yellowintensy"[x] Find conf files that contain the string 'password':"$white
+	CONFIGPASS=$(grep -r 'password' /etc/*.conf 2>/dev/null)
+	if [ "$CONFIGPASS" ];
+	then
+		echo -e "$CONFIGPASS\n"
 	else
 		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
@@ -1357,6 +1412,9 @@ function DevToolsAndLang(){
 	echo "pinfo  =	! -> less -> !sh"
 	echo "mutt   =	! -> sh"
 	echo "expect =	expect or expect -> sh"
+	echo "docker =	docker exec -ti {CONTAINER_ID} bash"
+	echo "ftp    =	!sh"
+	echo "irb    =	exec '/bin/sh'"
 	echo ""
 	echo $redintensy" ** Please note that we can replace 'sh' with 'bash'**"$white
 	echo ""
@@ -1425,6 +1483,15 @@ function SoftwareVersion(){
 	if [ "$APACHEUSER" ];
 	then
 		echo -e "$APACHEUSER\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
+
+	echo $yellowintensy"[x] Grep the apache access.log file for “user” and “pass” strings:"$white
+	ACCESSLOG=$(grep -E '^user|^pass' /var/log/apache/access.log 2>/dev/null)
+	if [ "$ACCESSLOG" ];
+	then
+		echo -e $redintensy"$ACCESSLOG\n"$white
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
@@ -1580,7 +1647,7 @@ function Postenum(){
 	then
 		Usage
 	else
-		if [ "$OPTIONS" == "-a" ];
+		if [ "$OPTIONS" == "-a" ] || [ "$OPTIONS" == "a" ];
 		then
 			OperatingSystem
 			AppsAndServices
@@ -1591,35 +1658,35 @@ function Postenum(){
 			DevToolsAndLang
 			TryingAccess
 		else
-			if [ "$OPTIONS" == "-s" ];
+			if [ "$OPTIONS" == "-s" ] || [ "$OPTIONS" == "s" ];
 			then
 				FileSystem
 			else
-				if [ "$OPTIONS" == "-l" ];
+				if [ "$OPTIONS" == "-l" ] || [ "$OPTIONS" == "l" ];
 				then
 					DevToolsAndLang
 				else
-					if [ "$OPTIONS" == "-c" ];
+					if [ "$OPTIONS" == "-c" ] || [ "$OPTIONS" == "c" ];
 					then
 						ConfidentialInfoAndUser
 					else
-						if [ "$OPTIONS" == "-n" ];
+						if [ "$OPTIONS" == "-n" ] || [ "$OPTIONS" == "n" ];
 						then
 							CommAndNet
 						else
-							if [ "$OPTIONS" == "-p" ];
+							if [ "$OPTIONS" == "-p" ] || [ "$OPTIONS" == "p" ];
 							then
 								AppsAndServices
 							else
-								if [ "$OPTIONS" == "-o" ];
+								if [ "$OPTIONS" == "-o" ] || [ "$OPTIONS" == "o" ];
 								then
 									OperatingSystem
 								else
-									if [ "$OPTIONS" == "-v" ];
+									if [ "$OPTIONS" == "-v" ] || [ "$OPTIONS" == "v" ];
 									then
 										SoftwareVersion
 									else
-										if [ "$OPTIONS" == "-t" ];
+										if [ "$OPTIONS" == "-t" ] || [ "$OPTIONS" == "t" ];
 										then
 											TryingAccess
 										else
