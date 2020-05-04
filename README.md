@@ -19,7 +19,7 @@ Postenum is a linux privilege escalation tool.
     -t : Fstab credentials and database access
     
 
-# Donation (Patreon & Paypal):
+# Donation:
 If this project help you reduce time to develop, you can give me a cup of coffee :)
 
 <p>
