@@ -17,16 +17,7 @@ Postenum is a linux privilege escalation tool.
     -o : OS informations and priv esc kernel exploits
     -v : Software's versions
     -t : Fstab credentials and database access
-    
 
-# Donation:
-If this project help you reduce time to develop, you can give me a cup of coffee :)
-
-<p>
-  <a href="https://www.paypal.me/mbahadou">
-      <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
-  </a>
-</p>
 
 # Demo:
 ![PostenumDemo](https://github.com/mbahadou/postenum/raw/master/demo.gif)
