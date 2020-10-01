@@ -1,6 +1,13 @@
-Version 1.0
+Version 1.1
 
 License: MIT
+
+Version 1.1
+  - New shell escaping (ed, links, /, cp, etc)
+  - Check for fetch command.
+  - SUID programming language (python, ruby, etc)
+  - More programming language check!
+  - Next
 
 Version 1.0
   - New shell escaping (docker, ftp, irb)..
