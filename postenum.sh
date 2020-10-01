@@ -1,91 +1,11 @@
 #!/bin/bash
-clear
 
 # License: MIT
 
-# Version 1.0
+# Version 1.1
 
-# Linux privilege escalation tool.
+# Linux enumeration and privilege escalation tool.
 # Be more than a normal user. Be the ROOT.
-
-# For help or reporting issues, create pull requests, visit https://github.com/mbahadou/postenum
-
-# CHANGELOGS
-# Version 1.0
-# - New shell escaping (docker, ftp, irb)..
-# - Dump cleartext Pre-Shared Wireless Keys
-# - Extract the string 'pass' and 'user' apache from access.log
-# - Checking the conf files for the string 'pass'
-# - World-writeable root jobs/tasks
-# - Next
-
-# Version 0.9
-# - Permission denied msg fixed
-# - Backup msg for non executed commands 
-# - Added new techniques for restricted linux shell escaping
-# - Added new methods for Linux upload files
-# - Root / files/folders list
-# - Organized & Clean and more
-# - Next
-
-# Version 0.8
-# - Replace the non-standard 'which' with the builtin command 'command -v'
-# - Replace the legacy backticked `..` with the notation $(..)
-# - Replace 'ls' directories with 'for loops'
-# - Udev vulnerable version check
-# - List all environments variables and list available shells
-# - Gdb shell escape
-# - World-writable files (directories already exist)
-# - Hidden files and clear-text passowrd/pass check
-# - Accessible .rhosts files
-# - Installation script for system/network admins (hard symbolic link)
-# - List NFS shares and permisisons
-# - Process binaries and umask check
-# - Better code and more..
-# - Next
-
-# Version 0.7
-# - Check java and exim vulnerable versions
-# - Display the content of passwd.master file (BSD)
-# - SElinux status
-# - Check for the existence of Kerberos tickets and GPG keys
-# - Sensitive logfiles owned by root - readable ?
-# - Shell escape - [nmap without --interactive option, man command, vim and vi]
-# - List files based on their Internet address
-# - CPU information
-# - New exploits from 2018/2019
-# - Solved some errors
-# - Next
-
-# Version 0.6
-# - Added search on config and db files on /var/ (using -s option)
-# - Exploit's guesses for linux kernel (using -o option)
-# - Next
-
-# Version 0.5
-# - Added pkexec vulnerable version check, and re-write /root and /home/* history files checking (using -v option)
-# - Added new feature based on SUID tools (less, cat, more, vim.basic, tail, head)  to read/write root files (using -s option) 
-# - The banner changed
-# - Next
-
-# Version 0.4
-# - Added features such as passwd, shadow (backups files) checks and more..
-# - Solved the previous errors... 
-# - Modified the whole -v option to avoid errors and to display the correct versions
-# - Next
-
-# Version 0.3
-# - Added command to display crontab contents and a check for list user's crontab 
-# - Next
-
-# Version 0.2
-# - A new title - shell escape [./postenum -l]
-# - Edited the development tools as well as the way to extract version from applications/services
-# - Next
-
-# Version 0.1
-# - It's the first time that we release our tool
-# - Next
 
 # variables
 white=$'\e[0m'
@@ -102,16 +22,16 @@ echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 1.0
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 1.1
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
 "$white
-echo "POST-ENUMERATION$grnintensy by mbahadou"$white
+echo "POST-EXPLOITATION Tool$grnintensy by Mostapha Bahadou"$white
 echo $whiteboldintensy"----------------------------------------------------------------------------"$white
 echo ""
 echo " postenum - be the ROOT"
-echo " For help or reporting issues, visit https://github.com/mbahadou/postenum"
+echo " For help or reporting issues, visit https://github.com/mostaphabahadou/postenum"
 echo ""
 
 function DirtyCow(){
@@ -1161,9 +1081,10 @@ function FileSystem(){
 	HEADCHECK=$(command -v head 2>/dev/null)
 	MORECHECK=$(command -v more 2>/dev/null)
 	LESSCHECK=$(command -v less 2>/dev/null)
+	NANOCHECK=$(command -v nano 2>/dev/null)
 	VIMBASICCHECK=$(command -v vim.basic 2>/dev/null)
 
-	if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$LESSCHECK" ] || [ -u "$VIMBASICCHECK" ];
+	if [ -u "$CATCHECK" ] || [ -u "$TAILCHECK" ] || [ -u "$HEADCHECK" ] || [ -u "$MORECHECK" ] || [ -u "$LESSCHECK" ] || [ -u "$NANOCHECK" ] || [ -u "$VIMBASICCHECK" ];
 	then
 		echo $cyan"[+] - Using SUIDs to read/write root files:"$white
 		if [ -u "$CATCHECK" ];
@@ -1184,7 +1105,7 @@ function FileSystem(){
 
 		if [ -u "$HEADCHECK" ];
 		then
-			AHEADCHECK=$(ls -l "$HEADCHECK")
+			AHEADCHECK=$(ls -l "$HEADCHECK" 2>/dev/null)
 			echo $redintensy"$AHEADCHECK"$white
 		else
 			:
@@ -1206,10 +1127,89 @@ function FileSystem(){
 			:
 		fi
 
+		if [ -u "$NANOCHECK" ];
+		then
+			ANANOCHECK=$(ls -l "$NANOCHECK" 2>/dev/null)
+			echo $redintensy"$ANANOCHECK"$white
+		else
+			:
+		fi
+
 		if [ -u "$VIMBASICCHECK" ];
 		then
 			AVIMBASICCHECK=$(ls -l "$VIMBASICCHECK" 2>/dev/null)
 			echo $redintensy"$AVIMBASICCHECK"$white
+		else
+			:
+		fi
+	else
+		:
+	fi
+	echo ""
+
+	LPYTHONCHECK=$(command -v python 2>/dev/null)
+	LPYTHON2CHECK=$(command -v python2 2>/dev/null)
+	LPYTHON3CHECK=$(command -v python3 2>/dev/null)
+	LPERLCHECK=$(command -v perl 2>/dev/null)
+	LRUBYCHECK=$(command -v ruby 2>/dev/null)
+	LPHPCHECK=$(command -v php 2>/dev/null)
+	LAWKCHECK=$(command -v awk 2>/dev/null)
+
+	if [ -u "$LPYTHONCHECK" ] || [ -u "$LPYTHON2CHECK" ] || [ -u "$LPYTHON3CHECK" ] || [ -u "$LPERLCHECK" ] || [ -u "$LRUBYCHECK" ] || [ -u "$LPHPCHECK" ] || [ -u "$LAWKCHECK" ];
+	then
+		echo $cyan"[+] - SUID for Proramming Language:"$white
+		if [ -u "$LPYTHONCHECK" ];
+		then
+			ALPYTHONCHECK=$(ls -l "$LPYTHONCHECK" 2>/dev/null)
+			echo $redintensy"$ALPYTHONCHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LPYTHON2CHECK" ];
+		then
+			ALPYTHON2CHECK=$(ls -l "$LPYTHON2CHECK" 2>/dev/null)
+			echo $redintensy"$ALPYTHON2CHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LPYTHON3CHECK" ];
+		then
+			ALPYTHON3CHECK=$(ls -l "$LPYTHON3CHECK" 2>/dev/null)
+			echo $redintensy"$ALPYTHON3CHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LPERLCHECK" ];
+		then
+			ALPERLCHECK=$(ls -l "$LPERLCHECK" 2>/dev/null)
+			echo $redintensy"$ALPERLCHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LRUBYCHECK" ];
+		then
+			ALRUBYCHECK=$(ls -l "$LRUBYCHECK" 2>/dev/null)
+			echo $redintensy"$ALRUBYCHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LPHPCHECK" ];
+		then
+			ALPHPCHECK=$(ls -l "$LPHPCHECK" 2>/dev/null)
+			echo $redintensy"$ALPHPCHECK"$white
+		else
+			:
+		fi
+
+		if [ -u "$LAWKCHECK" ];
+		then
+			ALAWKCHECK=$(ls -l "$LAWKCHECK" 2>/dev/null)
+			echo $redintensy"$ALAWKCHECK"$white
 		else
 			:
 		fi
@@ -1286,6 +1286,14 @@ function DevToolsAndLang(){
 		:
 	fi
 
+	PYTHON2=$(command -v python2 2>/dev/null)
+	if [ "$PYTHON2" ];
+	then
+		echo "$PYTHON2"
+	else
+		:
+	fi
+
 	PERL=$(command -v perl 2>/dev/null)
 	if [ "$PERL" ];
 	then
@@ -1314,6 +1322,38 @@ function DevToolsAndLang(){
 	if [ "$CC" ];
 	then
 		echo "$CC"
+	else
+		:
+	fi
+
+	AWK=$(command -v awk 2>/dev/null)
+	if [ "$AWK" ];
+	then
+		echo "$AWK"
+	else
+		:
+	fi
+
+	RUBY=$(command -v ruby 2>/dev/null)
+	if [ "$RUBY" ];
+	then
+		echo "$RUBY"
+	else
+		:
+	fi
+
+	DGBCH=$(command -v gdb 2>/dev/null)
+	if [ "$DGBCH" ];
+	then
+		echo "$DGBCH"
+	else
+		:
+	fi
+
+	EXPECTCH=$(command -v expect 2>/dev/null)
+	if [ "$EXPECTCH" ];
+	then
+		echo "$EXPECTCH"
 	else
 		:
 	fi
@@ -1391,6 +1431,14 @@ function DevToolsAndLang(){
 	else
 		:
 	fi
+
+	FETCHBSD=$(command -v fetch 2>/dev/null)
+	if [ "$FETCHBSD" ];
+	then
+		echo "$FETCHBSD"
+	else
+		:
+	fi
 	echo ""
 
 	echo $cyan"[+] - Shell escape:"$white
@@ -1415,6 +1463,13 @@ function DevToolsAndLang(){
 	echo "docker =	docker exec -ti {CONTAINER_ID} bash"
 	echo "ftp    =	!sh"
 	echo "irb    =	exec '/bin/sh'"
+	echo "ed     =	!'/bin/sh'"
+	echo "links  =	ESC -> FILE -> OS Shell"
+	echo "lynx   =	lynx --editor=/usr/bin/vi www.postenum.com"
+	echo "/      =	/bin/bash or /bin/sh"
+	echo "cp     =	cp /bin/bash escape_bash -> ./escape_bash"
+	echo "tar    =	tar xf /dev/null -I '/bin/sh -c \"sh <&2 1>&2\"'"
+	echo "tar    =	tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh"
 	echo ""
 	echo $redintensy" ** Please note that we can replace 'sh' with 'bash'**"$white
 	echo ""
@@ -1649,6 +1704,7 @@ function Postenum(){
 	else
 		if [ "$OPTIONS" == "-a" ] || [ "$OPTIONS" == "a" ];
 		then
+			clear
 			OperatingSystem
 			AppsAndServices
 			CommAndNet
@@ -1660,34 +1716,42 @@ function Postenum(){
 		else
 			if [ "$OPTIONS" == "-s" ] || [ "$OPTIONS" == "s" ];
 			then
+				clear
 				FileSystem
 			else
 				if [ "$OPTIONS" == "-l" ] || [ "$OPTIONS" == "l" ];
 				then
+					clear
 					DevToolsAndLang
 				else
 					if [ "$OPTIONS" == "-c" ] || [ "$OPTIONS" == "c" ];
 					then
+						clear
 						ConfidentialInfoAndUser
 					else
 						if [ "$OPTIONS" == "-n" ] || [ "$OPTIONS" == "n" ];
 						then
+							clear
 							CommAndNet
 						else
 							if [ "$OPTIONS" == "-p" ] || [ "$OPTIONS" == "p" ];
 							then
+								clear
 								AppsAndServices
 							else
 								if [ "$OPTIONS" == "-o" ] || [ "$OPTIONS" == "o" ];
 								then
+									clear
 									OperatingSystem
 								else
 									if [ "$OPTIONS" == "-v" ] || [ "$OPTIONS" == "v" ];
 									then
+										clear
 										SoftwareVersion
 									else
 										if [ "$OPTIONS" == "-t" ] || [ "$OPTIONS" == "t" ];
 										then
+											clear
 											TryingAccess
 										else
 											Usage
