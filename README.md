@@ -1,4 +1,4 @@
-Postenum is a linux privilege escalation tool.
+Postenum is a Linux enumeration and privilege escalation tool.
 
 # Usage:
     ./postenum.sh [option]
