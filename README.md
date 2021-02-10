@@ -14,7 +14,8 @@ Postenum is a Linux enumeration and privilege escalation tool.
     -c : Interesting [Backup files, PasswordPolicy, SSH files, etc.]
     -n : Network settings [DNS, ARP, Host, TCP, UDP, etc.]
     -p : Services and cron jobs
-    -o : OS informations and priv esc kernel exploits
+    -o : OS informations, drivers and defenses
+    -x : Kernel privilege escalation exploits
     -v : Software's versions
     -t : Fstab credentials and database access
 
