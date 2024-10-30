@@ -1,27 +1,18 @@
-Postenum is a Linux enumeration and privilege escalation tool.
+Postenum makes life easier for security professionals by automating the process of gathering critical system information after gaining a foothold. It helps quickly spot misconfigurations and privilege escalation opportunities, streamlining the path to deeper access.
+
+Built to be lightweight, portable, and modular, Postenum fits right into any environment without the hassle. Its modular design means you can load exactly what you need - whether it's system settings, network details, or software vulnerabilities - making it a fast, reliable, and flexible companion for every assessment.
 
 # Usage:
-    ./postenum.sh [option]
-    ./postenum.sh -s
-    ./postenum.sh s
-    ./postenum.sh -c
-    ./postenum.sh c
+    chmod +x postenum.sh
+    ./postenum.sh
 
-# Options:
-    -a : All (not recommended)
-    -s : Filesystem [SUID, SGID, Config/DB files, etc.]
-    -l : Shell escape, environment variables and development tools
-    -c : Interesting [Backup files, PasswordPolicy, SSH files, etc.]
-    -n : Network settings [DNS, ARP, Host, TCP, UDP, etc.]
-    -p : Services and cron jobs
-    -o : OS informations, drivers and defenses
-    -x : Kernel privilege escalation exploits
-    -v : Software's versions
-    -t : Fstab credentials and database access
+![alt  text](https://raw.githubusercontent.com/mostaphabahadou/postenum/refs/heads/master/postenum.PNG)
 
 
-# Demo:
-![PostenumDemo](https://github.com/mbahadou/postenum/raw/master/demo.gif)
+# Your support:
+If you'd like to support the project, I'd appreciate it if you treated me to a nice coffee. ☕😊
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/gbraad)
 
 # Contributing:
 
