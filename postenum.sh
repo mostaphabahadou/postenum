@@ -26,7 +26,7 @@ banner () {
                                                                           
  
 @mostaphabahadou
-version: 2.0                                                                        
+version: 2.1                                                                        
 	"
 	echo ""
 	echo "Welcome to Postenum. Type 'help' for available commands."
@@ -36,7 +36,7 @@ version: 2.0
 # Global Variables
 # =========================
 CURRENT_MODULE=""
-CURRENT_VERSION="2.0"
+CURRENT_VERSION="2.1"
 declare -A MODULE_DESCRIPTIONS  # Associative array for module descriptions
 history=()    # Array to store executed commands
 history_index=0  # Index to track current position in history
@@ -303,6 +303,7 @@ function KernelExploits(){
 			fi
 		fi
 	fi
+	shred -n 5 -u -z exploit.txt
 	echo ""
 }
 
@@ -312,6 +313,12 @@ function AppsAndServices(){
 	if [ "$CRON" ]; then
 		echo $yellowintensy"[+] Search on cron in /etc:"$white
 		echo -e "$CRON\n"
+	fi
+
+	SYSTIMER=$(systemctl list-timers --all 2>/dev/null)
+	if [ "$SYSTIMER" ]; then
+		echo $yellowintensy"[+] List of active and inactive systemd timers:"$white
+		echo -e "$SYSTIMER\n"
 	fi
 
 	CRONWRASROOT=$(find /etc/cron* -type f -perm -o+w -exec ls -l {} \; 2>/dev/null)
@@ -386,7 +393,7 @@ function AppsAndServices(){
 		echo -e "$AUXROOT\n"
 	fi
 
-	MYSQL=$(ps aux | grep mysql 2>/dev/null)
+	MYSQL=$(ps aux | grep '[m]ysql' 2>/dev/null)
 	if [ "$MYSQL" ]; then
 		echo $yellowintensy"[+] MySQL running as root:"$white
 		echo -e $redintensy"$MYSQL\n"$white
@@ -611,7 +618,7 @@ function ConfidentialInfoAndUser(){
 
 	UNUSUALF=$(ls -la / | grep -v 'total ' 2>/dev/null)
 	if [ "$UNUSUALF" ]; then
-		echo $yellowintensy"[+] From / - any interesting folder/files:"$white
+		echo $yellowintensy"[+] From / - Interesting folder/files:"$white
 		echo -e "$UNUSUALF\n"$white
 	fi
 
@@ -760,31 +767,49 @@ function ConfidentialInfoAndUser(){
 		echo $yellowintensy"[+] Cleartext Pre-Shared Wireless Keys from Network Manager:"$white
 		echo -e $redintensy"$WIRELESSKEY\n"$white
 	fi
+
+	ANSIBLEETC=$(ls /etc/ansible 2>/dev/null)
+	if [ "$ANSIBLEETC" ]; then
+		echo $yellowintensy"[+] Ansible indicator::"$white
+		echo -e $redintensy"$ANSIBLEETC\n"$white
+	fi
+
+	ANSIBLEHOST=$(cat /etc/ansible/hosts 2>/dev/null)
+	if [ "$ANSIBLEHOST" ]; then
+		echo $yellowintensy"[+] Ansible inventory::"$white
+		echo -e $redintensy"$ANSIBLEHOST\n"$white
+	fi
+
+	ARTIFACTORY=$(ps aux | grep '[a]rtifactory' 2>/dev/null)
+	if [ "$ARTIFACTORY" ]; then
+		echo $yellowintensy"[+] Artifactory indicator:"$white
+		echo -e $redintensy"$ARTIFACTORY\n"$white
+	fi
 }
 
 function FileSystem(){
 	echo $boldgrn"[-] FILE SYSTEM"$white
 	VAR=$(for x in "/var"; do ls -lh "$x"; done | grep -v "total" 2>/dev/null)
 	if [ "$VAR" ]; then
-		echo $yellowintensy"[+] Any interesting file/folder in /var:"$white
+		echo $yellowintensy"[+] Interesting file/folder in /var:"$white
 		echo -e "$VAR\n"
 	fi
 
 	WWW=$(for x in "/var/www"; do ls -lh "$x"; done 2>/dev/null)
 	if [ -d /var/www ]; then
-		echo $yellowintensy"[+] Any interesting file/folder in /var/www:"$white
+		echo $yellowintensy"[+] Interesting file/folder in /var/www:"$white
 		echo -e "$WWW\n"
 	fi
 
 	HTML=$(for x in "/var/www/html"; do ls -lh "$x"; done 2>/dev/null)
 	if [ -d /var/www/html ]; then
-		echo $yellowintensy"[+] Any interesting file/folder in /var/www/html:"$white
+		echo $yellowintensy"[+] Interesting file/folder in /var/www/html:"$white
 		echo -e "$HTML\n"
 	fi
 
 	VARTMP=$(for x in "/var/tmp"; do ls -lh "$x"; done 2>/dev/null)
 	if [ -d /var/tmp ]; then
-		echo $yellowintensy"[+] Any interesting file/folder in /var/tmp - no cleanup after reboot:"$white
+		echo $yellowintensy"[+] Interesting file/folder in /var/tmp - no cleanup after reboot:"$white
 		echo -e "$VARTMP\n"
 	fi
 
@@ -953,6 +978,18 @@ function FileSystem(){
 	if [ "$LOGFILES" ]; then
 		echo $yellowintensy"[+] World-readable logfiles- owned by root - 0004:"$white
 		echo -e "$LOGFILES\n"$white
+	fi
+
+	JOURNALCTLCREDS=$(journalctl | grep -v "password]" | grep -v "using password authentication" | grep " password " 2>/dev/null)
+	if [ "$JOURNALCTLCREDS" ]; then
+		echo $yellowintensy"[+] Extract credentials from journalctl log services:"$white
+		echo -e "$JOURNALCTLCREDS\n"$white
+	fi
+
+	WRITABLESERVICE=$(find /etc/systemd/system/ -type f -writable 2>/dev/null)
+	if [ "$WRITABLESERVICE" ]; then
+		echo $yellowintensy"[+] World-writable file services:"$white
+		echo -e "$WRITABLESERVICE\n"$white
 	fi
 
 	NSFEXPORTS=$(ls -la /etc/exports 2>/dev/null)
@@ -1126,6 +1163,12 @@ function DevToolsAndLang(){
 		echo -e "$PRINTENV\n"
 	fi
 
+	PATHMISCONFIG=$(find $(echo $PATH | tr ':' ' ') -type d -perm -o+w 2>/dev/null)
+	if [ "$PATHMISCONFIG" ]; then
+		echo $yellowintensy"[+] PATH wariable misconfiguration:"$white
+		echo -e "$PATHMISCONFIG\n"
+	fi
+
 	SHELLS=$(cat /etc/shells 2>/dev/null)
 	if [ "$SHELLS" ]; then
 		echo $yellowintensy"[+] Display available shells:"$white
@@ -1281,7 +1324,7 @@ MODULE_DESCRIPTIONS=(
   [sys_soft]="Retrieves software versions for vulnerability checks."
   [sys_db]="Examines /etc/fstab for stored credentials and accessible databases."
   [sys_exploit]="Searches for potential kernel privilege escalation exploits."
-  [sys_user]="Finds backup files, SSH keys, Sudoes, and password policies."
+  [sys_user]="Finds backup files, SSH keys, Sudoes, DevOps implementation, and password policies."
 )
 
 modules=("${!MODULE_DESCRIPTIONS[@]}")
@@ -1314,6 +1357,7 @@ use_module() {
   fi
 }
 
+
 # Run the selected module
 run_module() {
   if [[ -z "$CURRENT_MODULE" ]]; then
@@ -1333,6 +1377,39 @@ run_module() {
       *) echo "Unknown module: $CURRENT_MODULE" ;;
     esac
   fi
+}
+
+# Export the selected module's results
+export_module() {
+	if [[ -z "$CURRENT_MODULE" ]]; then
+		echo "No module selected. Use 'use <module>' to select one."
+		return
+
+	elif [[ -z "$args" ]]; then
+		echo "You must specify a filename for the export."
+		return
+
+	else
+
+		output_file="$args"
+		echo "Exporting results of '$CURRENT_MODULE' to $output_file..."
+
+		# Run the selected module and export the results to the file
+		case $CURRENT_MODULE in
+		sys_config) FileSystem > "$output_file" ;;
+		sys_info) OperatingSystem > "$output_file" ;;
+		sys_escape) DevToolsAndLang > "$output_file" ;;
+		sys_network) CommAndNet > "$output_file" ;;
+		sys_cron) AppsAndServices > "$output_file" ;;
+		sys_soft) SoftwareVersion > "$output_file" ;;
+		sys_db) TryingAccess > "$output_file" ;;
+		sys_exploit) KernelExploits > "$output_file" ;;
+		sys_user) ConfidentialInfoAndUser > "$output_file" ;;
+		*) echo "Unknown module: $CURRENT_MODULE" ;;
+		esac
+
+		echo "[+] Results saved to: $output_file"
+	fi
 }
 
 
@@ -1362,10 +1439,10 @@ _complete_input() {
   local candidates=()
 
   # Provide module names only when 'use' is typed
-  if [[ "$line" == use* ]]; then
+  if [[ "$line" == use* ]] ; then
     candidates=("${modules[@]}")
   else
-    candidates=("use" "run" "show" "version" "clear" "reload" "banner" "exit" "help")
+    candidates=("use" "run" "show" "version" "clear" "reload" "banner" "export" "exit" "help")
   fi
 
   # Filter matching candidates
@@ -1440,16 +1517,18 @@ while true; do
     reload) reload_module ;;
 	banner) banner ;;
     exit) echo "Exiting Postenum..."; break ;;
+	export) export_module "$args" ;;
     help)
       echo "Available commands:"
-      echo "  use <module>   - Load a specific module"
-      echo "  run            - Run the currently loaded module"
-      echo "  show           - Show available modules"
-      echo "  version        - Display the current version"
-      echo "  clear          - Clear the console"
-      echo "  reload         - Reset the loaded module"
-      echo "  banner         - Display the banner"
-      echo "  exit           - Exit Postenum"
+      echo "  use <module>      - Load a specific module"
+      echo "  run               - Run the currently loaded module"
+      echo "  show              - Show available modules"
+      echo "  version           - Display the current version"
+      echo "  clear             - Clear the console"
+      echo "  reload            - Reset the loaded module"
+      echo "  banner            - Display the banner"
+      echo "  export <filename> - Export results of a module to a file"
+      echo "  exit              - Exit Postenum"
       ;;
     *)
       echo "Unknown command: '$cmd'. Type 'help' for usage." ;;
