@@ -26,21 +26,18 @@ banner () {
                                                                           
  
 @mostaphabahadou
-version: 2.1                                                                        
+version: 2.2                                                                        
 	"
 	echo ""
 	echo "Welcome to Postenum. Type 'help' for available commands."
 }
 
-# =========================
-# Global Variables
-# =========================
 CURRENT_MODULE=""
-CURRENT_VERSION="2.1"
-declare -A MODULE_DESCRIPTIONS  # Associative array for module descriptions
-history=()    # Array to store executed commands
-history_index=0  # Index to track current position in history
-current_input=""  # Store current input temporarily
+CURRENT_VERSION="2.2"
+declare -A MODULE_DESCRIPTIONS
+history=() 
+history_index=0 
+current_input="" 
 
 function DirtyCow(){
 	echo $redintensy"Linux Kernel 2.6.22 < 3.9 Dirty Cow$white - https://www.exploit-db.com/exploits/40839"
@@ -136,6 +133,55 @@ function OperatingSystem(){
 	if [ "$WHOAMI" ]; then
 		echo $yellowintensy"[+] The current user:"$white
 		echo -e "$WHOAMI\n"
+	fi
+
+	HOSTNAME=$(hostname 2>/dev/null)
+	if [ "$HOSTNAME" ]; then
+		echo $yellowintensy"[+] Hostname:"$white
+		echo -e "$HOSTNAME\n"
+	fi
+
+	HOSTNAMEDOMAIN=$(hostname -d 2>/dev/null)
+	if [ "$HOSTNAMEDOMAIN" ]; then
+		echo $yellowintensy"[+] Domain-joined machine via hostname:"$white
+		echo -e "$HOSTNAMEDOMAIN\n"
+	fi
+
+	HOSTNAMEREALM=$(realm list 2>/dev/null)
+	if [ "$HOSTNAMEREALM" ]; then
+		echo $yellowintensy"[+] Domain-joined machine via realm:"$white
+		echo -e "$HOSTNAMEREALM\n"
+	fi
+
+	VMDETECT=$(systemd-detect-virt 2>/dev/null)
+	if [ "$VMDETECT" ]; then
+		echo $yellowintensy"[+] OS is running under a virtualization system:"$white
+		echo -e "$VMDETECT\n"
+	fi
+
+	docker_detect() {
+		[ -f /.dockerenv ] && return 0
+
+		if grep -qi "docker\|containerd\|kubepods" /proc/1/cgroup 2>/dev/null; then
+			return 0
+		fi
+
+		[ "$container" = "docker" ] && return 0
+
+		if command -v systemd-detect-virt >/dev/null && \
+			[ "$(systemd-detect-virt --container)" = "docker" ]; then
+				return 0
+		fi
+
+		return 1
+	}
+
+	if docker_detect; then
+		echo $yellowintensy"[+] OS is running under a docker system:"$white
+		echo -e "True\n"
+	else
+		echo $yellowintensy"[+] OS is running under a docker system:"$white
+		echo -e "False\n"
 	fi
 
 	RELEASE=$(cat /etc/*-release 2>/dev/null)
@@ -450,12 +496,6 @@ function CommAndNet(){
 		echo -e "$IPTABLE\n"
 	fi
 
-	HOSTNAME=$(hostname 2>/dev/null)
-	if [ "$HOSTNAME" ]; then
-		echo $yellowintensy"[+] hostname:"$white
-		echo -e "$HOSTNAME\n"
-	fi
-
 	DNS=$(dnsdomainname 2>/dev/null)
 	if [ "$DNS" ]; then
 		echo $yellowintensy"[+] Get DNS domain or the FQDN:"$white
@@ -534,6 +574,12 @@ function ConfidentialInfoAndUser(){
 		echo -e "$PASSWD\n"
 	fi
 
+	PASSWDEXEC=$(cat /etc/passwd 2>/dev/null)
+	if [ "$PASSWDEXEC" ]; then
+		echo $yellowintensy"[+] Reading /etc/passwd file:"$white
+		echo -e $redintensy"$PASSWDEXEC\n"$white
+	fi
+
 	CHECKETC=$(find /etc/ -maxdepth 1 -name "*.conf" -type f -exec ls -la {} \; 2>/dev/null)
 	if [ "$CHECKETC" ]; then
 		echo $yellowintensy"[+] All *.conf files in /etc (recursive 1 level):"$white
@@ -554,7 +600,18 @@ function ConfidentialInfoAndUser(){
 		echo -e "$SUDOPASS\n"
 	fi
 
-	
+	ENVFILES=$(find / -type f -iname "*.env" 2>/dev/null)
+	if [ "$ENVFILES" ]; then
+		echo $yellowintensy"[+] Available .env files:"$white
+		echo -e $redintensy"$ENVFILES\n"$white
+	fi
+
+	BAKFILES=$(find / -type f -iname "*.bak" 2>/dev/null)
+	if [ "$BAKFILES" ]; then
+		echo $yellowintensy"[+] Available .bak files:"$white
+		echo -e $redintensy"$BAKFILES\n"$white
+	fi
+
 	echo $yellowintensy"[+] From /etc - /etc/passwd /etc/shadow /etc/group /etc/sudoers:"$white
 	WRPASS=$(ls -l /etc/passwd 2>/dev/null)
 	if [ -w /etc/passwd ]; then
@@ -691,31 +748,28 @@ function ConfidentialInfoAndUser(){
 		echo -e $redintensy"$PHPHISTORY\n"$white
 	fi
 
-	for usersshfolder in /home/*/.ssh
-	do
-		echo $yellowintensy"[+] Any private-key info - /home/*/.ssh/:"$white
-		ls -ld "$usersshfolder"
-		for files in $usersshfolder
-		do
-        	if [ -r "$files" ]; then
-        		sshfile=$(ls -l "$files" | grep -v "total " 2>/dev/null)
-        		echo -e $redintensy"$sshfile READABLE\n"$white
-        	fi
-        done
-    done
+	for usersshfolder in /home/*/.ssh; do
+    	if [ -d "$usersshfolder" ]; then
+        	echo -e "${yellowintensy}[+] Any private-key info - $usersshfolder:${white}"
+        	ls -ld "$usersshfolder"
+        
+	        for file in "$usersshfolder"/*; do
+	            if [ -r "$file" ] && [ -f "$file" ]; then
+	                echo -e "${redintensy}$(ls -l "$file") READABLE\n${white}"
+	            fi
+	        done
+    	fi
+	done
         
 	if [ -d /root/.ssh ]; then
-	    echo $yellowintensy"[+] Any private-key info - /root/.ssh/:"$white
+	    echo -e "${yellowintensy}[+] Any private-key info - /root/.ssh/:${white}"
 	    ls -ld /root/.ssh/
-	    for rootsshfiles in "/root/.ssh"
-	    do
-		    if [ -r "$rootsshfiles" ]; then
-			    rootsshfile=$(ls -l "$files" | grep -v "total " 2>/dev/null)
-			    echo -e $redintensy"$rootsshfile [READABLE]\n"$white
-	        else
-				LISTSSHROOT=$(ls -ld /root/.ssh/)
-				echo -e "$LISTSSHROOT\n"
-	   	     fi
+
+	    for rootsshfiles in /root/.ssh/*; do
+	        if [ -f "$rootsshfiles" ] && [ -r "$rootsshfiles" ]; then
+	            rootsshfile=$(ls -l "$rootsshfiles" | grep -v "total " 2>/dev/null)
+	            echo -e "${redintensy}$rootsshfile [READABLE]\n${white}"
+	        fi
 	    done
 	fi
 
@@ -725,6 +779,12 @@ function ConfidentialInfoAndUser(){
 		echo $redintensy"[!] Root is allowed to login via SSH"$white
 		echo -e "$ROOTLOGIN\n"
 	fi
+
+	SSHAGENT=$(grep -Ei '^[[:space:]]*AllowAgentForwarding' /etc/ssh/sshd_config 2>/dev/null)
+	if [ "$SSHAGENT" ]; then
+        echo $yellowintensy"[+] SSH hijacking is possible:"$white
+        echo -e $redintensy"$SSHAGENT\n"$white
+    fi
 	
 	PGPKEY=$(ls -l /home/*/.gnupg/secring.gpgs 2>/dev/null)
 	if [ "$PGPKEY" ]; then
@@ -1312,9 +1372,26 @@ function TryingAccess(){
 	fi
 }
 
-# =========================
-# Module Descriptions
-# =========================
+function AllInOne(){
+	FileSystem
+	OperatingSystem
+	DevToolsAndLang
+	CommAndNet
+	AppsAndServices
+	SoftwareVersion
+	TryingAccess
+	KernelExploits
+	ConfidentialInfoAndUser
+}
+
+function version() {
+  echo "Postenum version: $CURRENT_VERSION"
+}
+
+function clear_screen() {
+  clear
+}
+
 MODULE_DESCRIPTIONS=(
   [sys_config]="Identifies files with SUID, SGID, and sensitive configuration or database files."
   [sys_info]="Displays OS information, installed drivers, and defense mechanisms."
@@ -1325,24 +1402,19 @@ MODULE_DESCRIPTIONS=(
   [sys_db]="Examines /etc/fstab for stored credentials and accessible databases."
   [sys_exploit]="Searches for potential kernel privilege escalation exploits."
   [sys_user]="Finds backup files, SSH keys, Sudoes, DevOps implementation, and password policies."
+  [allcheck]="Execute all postenum modules."
 )
 
 modules=("${!MODULE_DESCRIPTIONS[@]}")
 
-# =========================
-# Helper Functions
-# =========================
-
-# List available modules
-show_modules() {
+function show_modules() {
   echo "Available modules:"
   for module in "${!MODULE_DESCRIPTIONS[@]}"; do
     echo "  - $module		${MODULE_DESCRIPTIONS[$module]}"
   done
 }
 
-# Load a module
-use_module() {
+function use_module() {
   if [[ -z $1 ]]; then
     echo "No module specified. Use 'show' to list available modules."
     return
@@ -1357,9 +1429,7 @@ use_module() {
   fi
 }
 
-
-# Run the selected module
-run_module() {
+function run_module() {
   if [[ -z "$CURRENT_MODULE" ]]; then
     echo "No module selected. Use 'use <module>' to select one."
   else
@@ -1374,13 +1444,13 @@ run_module() {
 	  sys_db) TryingAccess ;;
 	  sys_exploit) KernelExploits ;;
 	  sys_user) ConfidentialInfoAndUser ;;
+	  allcheck) AllInOne ;;
       *) echo "Unknown module: $CURRENT_MODULE" ;;
     esac
   fi
 }
 
-# Export the selected module's results
-export_module() {
+function export_module() {
 	if [[ -z "$CURRENT_MODULE" ]]; then
 		echo "No module selected. Use 'use <module>' to select one."
 		return
@@ -1394,7 +1464,6 @@ export_module() {
 		output_file="$args"
 		echo "Exporting results of '$CURRENT_MODULE' to $output_file..."
 
-		# Run the selected module and export the results to the file
 		case $CURRENT_MODULE in
 		sys_config) FileSystem > "$output_file" ;;
 		sys_info) OperatingSystem > "$output_file" ;;
@@ -1405,6 +1474,7 @@ export_module() {
 		sys_db) TryingAccess > "$output_file" ;;
 		sys_exploit) KernelExploits > "$output_file" ;;
 		sys_user) ConfidentialInfoAndUser > "$output_file" ;;
+		allcheck) AllInOne > "$output_file" ;;
 		*) echo "Unknown module: $CURRENT_MODULE" ;;
 		esac
 
@@ -1412,19 +1482,7 @@ export_module() {
 	fi
 }
 
-
-# Display the current version
-version() {
-  echo "Postenum version: $CURRENT_VERSION"
-}
-
-# Clear the console
-clear_screen() {
-  clear
-}
-
-# Reload the currently loaded module
-reload_module() {
+function reload_module() {
   if [[ -z "$CURRENT_MODULE" ]]; then
     echo "No module currently loaded. Use 'use <module>' to load one."
   else
@@ -1433,45 +1491,41 @@ reload_module() {
   fi
 }
 
-_complete_input() {
+function _complete_input() {
   local line="${READLINE_LINE}"
   local word="${line##* }"
   local candidates=()
 
-  # Provide module names only when 'use' is typed
   if [[ "$line" == use* ]] ; then
     candidates=("${modules[@]}")
   else
     candidates=("use" "run" "show" "version" "clear" "reload" "banner" "export" "exit" "help")
   fi
 
-  # Filter matching candidates
   local matches=($(compgen -W "${candidates[*]}" -- "$word"))
 
-  # Print matches below the prompt if there are any
   if (( ${#matches[@]} > 1 )); then
     echo -e $redbold"\npostenum > "$white$line
     for match in "${matches[@]}"; do
       printf "%s\n" "$match"
     done
-    echo  # Extra newline for better readability
+    echo 
   fi
 
-  # If there's exactly one match, replace the word in the input line
   if (( ${#matches[@]} == 1 )); then
-    READLINE_LINE="${line%$word}${matches[0]} "  # Replace the current word with the match
-    READLINE_POINT=${#READLINE_LINE}              # Update the cursor position
+    READLINE_LINE="${line%$word}${matches[0]} " 
+    READLINE_POINT=${#READLINE_LINE}
   fi
 }
 
 bind -x '"\t": _complete_input'
 
-add_to_history() {
+function add_to_history() {
   history+=("$1")
-  history_index=${#history[@]}  # Reset index to end of history
+  history_index=${#history[@]}
 }
 
-scroll_history_up() {
+function scroll_history_up() {
   if (( history_index > 0 )); then
     ((history_index--))
     READLINE_LINE="${history[$history_index]}"
@@ -1479,58 +1533,65 @@ scroll_history_up() {
   fi
 }
 
-scroll_history_down() {
+function scroll_history_down() {
   if (( history_index < ${#history[@]} - 1 )); then
     ((history_index++))
     READLINE_LINE="${history[$history_index]}"
   else
-    history_index=${#history[@]}  # Reset to allow new input
+    history_index=${#history[@]}
     READLINE_LINE="$current_input"
   fi
   READLINE_POINT=${#READLINE_LINE}
 }
 
-bind -x '"\e[A": scroll_history_up'   # Up arrow
-bind -x '"\e[B": scroll_history_down' # Down arrow
+bind -x '"\e[A": scroll_history_up'
+bind -x '"\e[B": scroll_history_down'
 
 banner
 
 while true; do
-  read -e -p $redbold"postenum > "$white cmd args
+    read -e -p $redbold"postenum > "$white pcommand
 
-  if [[ -z "$cmd" ]]; then
-    echo "Command cannot be empty. Type 'help' for usage."
-    continue
-  fi
+    if [[ -z "$pcommand" ]]; then
+        echo "Command cannot be empty. Type 'help' for usage."
+        continue
+    fi
 
-  # Add non-empty commands to history
-  if [[ -n "$cmd" ]]; then
-    add_to_history "$cmd $args"
-  fi
+    add_to_history "$pcommand"
 
-  case $cmd in
-    use) use_module "$args";;
-    run) run_module ;;
-    show) show_modules ;;
-    version) version ;;
-    clear) clear_screen ;;
-    reload) reload_module ;;
-	banner) banner ;;
-    exit) echo "Exiting Postenum..."; break ;;
-	export) export_module "$args" ;;
-    help)
-      echo "Available commands:"
-      echo "  use <module>      - Load a specific module"
-      echo "  run               - Run the currently loaded module"
-      echo "  show              - Show available modules"
-      echo "  version           - Display the current version"
-      echo "  clear             - Clear the console"
-      echo "  reload            - Reset the loaded module"
-      echo "  banner            - Display the banner"
-      echo "  export <filename> - Export results of a module to a file"
-      echo "  exit              - Exit Postenum"
-      ;;
-    *)
-      echo "Unknown command: '$cmd'. Type 'help' for usage." ;;
-  esac
+    if [[ $pcommand == \!* ]]; then
+        command="${pcommand:1}" 
+        echo "[Executing: $command]"
+        eval "$command"
+    else
+        cmd="${pcommand%% *}"
+        args="${pcommand#* }" 
+
+        case $cmd in
+            use) use_module "$args" ;;
+            run) run_module ;;
+            show) show_modules ;;
+            version) version ;;
+            clear) clear_screen ;;
+            reload) reload_module ;;
+            banner) banner ;;
+            exit) echo "Exiting Postenum..."; break ;;
+            export) export_module "$args" ;;
+            help)
+                echo "Available commands:"
+                echo "  use <module>      - Load a specific module"
+                echo "  run               - Run the currently loaded module"
+                echo "  show              - Show available modules"
+                echo "  version           - Display the current version"
+                echo "  clear             - Clear the console"
+                echo "  reload            - Reset the loaded module"
+                echo "  banner            - Display the banner"
+                echo "  export <filename> - Export results of a module to a file"
+                echo "  !<command>        - Execute a system command (e.g., !id)"
+                echo "  exit              - Exit Postenum"
+                ;;
+            *)
+                echo "Unknown command: '$cmd'. Type 'help' for usage." ;;
+        esac
+    fi
 done
